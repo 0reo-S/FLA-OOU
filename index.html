@@ -79,6 +79,17 @@ td:last-child{font-weight:800}
 .hof{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .hof .card{border-top:5px solid var(--gold)}
 .hof small{color:var(--mute)}
+.spot{display:grid;gap:20px;grid-template-columns:150px 1fr;align-items:center;border-top:5px solid var(--gold);margin-bottom:20px}
+.spot h3{font-size:32px}
+.spot em{color:var(--orange);font-style:normal;font-weight:600}
+@media (max-width:480px){.spot{grid-template-columns:1fr}.spot .av{max-width:170px}}
+.sub{font-size:30px;margin:26px 0 12px;color:var(--ink)}
+.tl{border-left:3px solid var(--orange);margin:0 0 0 8px;padding:0}
+.tl li{list-style:none;position:relative;padding:0 0 18px 22px}
+.tl li::before{content:"";position:absolute;left:-9px;top:6px;width:15px;height:15px;border-radius:50%;background:var(--green);border:3px solid var(--bg)}
+.tl b{font:800 24px "Barlow Condensed";color:var(--orange)}
+.perks{margin:14px 0 20px;padding-left:20px}
+.perks li{margin:6px 0}
 .news{display:grid;gap:14px}
 .soon{background:var(--green-d);color:#fff;border-radius:18px;padding:34px 24px;text-align:center}
 .soon h2{color:#fff}
@@ -120,7 +131,7 @@ textarea{min-height:90px}
 <body>
 <nav aria-label="Main">
 <img src="logo.jpg" alt="FLA logo">
-<a href="#about">About</a><a href="#leadership">Leadership</a><a href="#faculties">Faculties</a><a href="#matches">Matches</a><a href="#tables">Tables</a><a href="#gallery">Gallery</a><a href="#fame">Hall of Fame</a><a href="#news">News</a><a href="#play">Play</a><a href="#trivia">Trivia</a><a href="#sponsors">Sponsors</a><a href="#constitution">Constitution</a><a href="#follow">Follow us</a>
+<a href="#about">About</a><a href="#history">History</a><a href="#leadership">Leadership</a><a href="#faculties">Faculties</a><a href="#matches">Matches</a><a href="#tables">Tables</a><a href="#winners">Winners</a><a href="#gallery">Gallery</a><a href="#fame">Hall of Fame</a><a href="#news">News</a><a href="#play">Play</a><a href="#trivia">Trivia</a><a href="#sponsors">Sponsors</a><a href="#constitution">Constitution</a><a href="#follow">Follow us</a>
 </nav>
 <div class="breaking"><b>BREAKING</b><span id="brk"></span></div>
 
@@ -133,6 +144,11 @@ textarea{min-height:90px}
 
 <section id="about"><h2>About FLA</h2>
 <div class="about"><div class="card"><h3>Who we are</h3><p id="about-t"></p></div><div class="card"><h3>Our mission</h3><p id="mission-t"></p></div></div></section>
+
+<section id="history"><h2>Our history</h2>
+<p class="lead">The story of FLA OOU and what we have achieved over the years.</p>
+<div class="card"><p id="hist-t"></p></div>
+<h3 class="sub">Achievements</h3><ul class="tl" id="ach"></ul></section>
 
 <section id="leadership"><h2>Leadership</h2>
 <p class="lead">The people who run and have run FLA at OOU.</p>
@@ -147,19 +163,29 @@ textarea{min-height:90px}
 <section id="tables"><h2>Tables</h2><p class="lead">Current standings.</p>
 <div class="scroll"><table><thead><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead><tbody id="tbl"></tbody></table></div></section>
 
+<section id="winners"><h2>Previous winners</h2>
+<p class="lead">The champions who have won FLA competitions at OOU.</p>
+<h3 class="sub">FLA Main · Men</h3><div id="w-mm"></div>
+<h3 class="sub">FLA Main · Women</h3><div id="w-mw"></div>
+<h3 class="sub">FLA Freshers · Men</h3><div id="w-fr"></div></section>
+
 <section id="gallery"><h2>Gallery</h2><p class="lead">Moments from matches and events.</p><div class="gal" id="gal"></div></section>
 
-<section id="fame"><h2>Hall of Fame</h2><p class="lead">Legends of FLA OOU.</p><div class="hof" id="hof"></div></section>
+<section id="fame"><h2>Hall of Fame</h2><p class="lead">Legends of FLA OOU.</p>
+<h3 class="sub" style="margin-top:0">Alumni spotlight of the day</h3><div id="spot"></div>
+<div class="hof" id="hof"></div></section>
 
 <section id="news"><h2>News and events</h2><p class="lead">Announcements from the executive.</p><div class="news" id="newsList"></div></section>
 
 <section id="play"><h2>Take a shot</h2><p class="lead">Tap the goal where you want to shoot. Beat the keeper and a goal announcement appears in News.</p><div class="card"><canvas id="pitch" width="360" height="230" role="img" aria-label="Penalty shootout game. Tap the goal to shoot."></canvas><div class="pbar"><b id="gscore">Goals 0 · Shots 0</b><button class="btn sm" id="rnd">Shoot at random</button></div><p class="gnote" id="gmsg"></p></div></section>
 
-<section id="trivia"><h2>Football trivia</h2><p class="lead">Tap an answer to test yourself.</p><div class="card" id="triv"></div></section>
+<section id="trivia"><h2>Football trivia</h2><p class="lead">New questions every day. Tap an answer to test yourself.</p><div class="card" id="triv"></div></section>
 
 <section id="fantasy"><div class="soon"><span class="tag">Coming soon</span><h2 style="margin-top:14px">FLA Fantasy League</h2><p>Pick your squad, beat your friends and climb the campus leaderboard. This section is on the way.</p></div></section>
 
-<section id="sponsors"><h2>Sponsors</h2><p class="lead">Brands backing FLA events. Want your brand here?</p><div class="spons" id="spons"></div><a class="btn sm" id="spBtn">Become a sponsor</a></section>
+<section id="sponsors"><h2>Sponsors</h2><p class="lead" id="sp-pitch"></p>
+<div class="card"><h3>What your brand stands to gain</h3><ul class="perks" id="perks"></ul><div class="follow" id="spCta"></div></div>
+<h3 class="sub">Our partners</h3><div class="spons" id="spons"></div></section>
 
 <section id="constitution"><h2>Constitution</h2><div class="card" id="const" style="margin-top:20px"></div></section>
 
@@ -174,37 +200,53 @@ textarea{min-height:90px}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const D=window.FLA_CONTENT;
-let C,unlocked=false,tab,ag,live=[];
+let C,unlocked=false,tab,ag,wk="mm",live=[],dt=[];
 try{const s=localStorage.getItem("fla-content");C=Object.assign(structuredClone(D),s?JSON.parse(s):{})}catch(e){C=structuredClone(D)}
 tab=Object.keys(C.groups)[0];ag=tab;
+const day=Math.floor(Date.now()/864e5);
+const empty=t=>`<p class="gnote">${t}</p>`;
+const av=(img,n)=>`<div class="av">${img?`<img src="${esc(img)}" alt="${esc(n)}" loading="lazy">`:"FLA"}</div>`;
+function wins(a){
+ if(!a||!a.length)return empty("Winners will be added soon.");
+ return `<div class="people">`+[...a].sort((x,y)=>String(y.year).localeCompare(String(x.year))).map(w=>`<div class="person">${av(w.img,w.n)}<b>${esc(w.n)}</b><em>${esc(w.year)}</em></div>`).join("")+`</div>`;
+}
+function wl(){return wk==="sp"?C.spotlight:C.winners[wk]}
 
 function render(){
  $("brk").textContent=C.breaking;
  $("about-t").textContent=C.about;$("mission-t").textContent=C.mission;
+ $("hist-t").textContent=C.history||"The story of FLA OOU will be told here soon.";
+ $("ach").innerHTML=C.achievements.length?C.achievements.map(([y,t])=>`<li><b>${esc(y)}</b><br>${esc(t)}</li>`).join(""):`<li>${empty("Achievements will be added soon.")}</li>`;
  if(!C.groups[tab])tab=Object.keys(C.groups)[0];
  $("tabs").innerHTML=Object.keys(C.groups).map(g=>`<button class="tab" role="tab" data-g="${esc(g)}" aria-selected="${g===tab}">${esc(g)}</button>`).join("");
  const G=C.groups[tab];$("gnote").textContent=G.note||"";
- $("people").innerHTML=G.people.map(p=>`<div class="person"><div class="av">${p.img?`<img src="${esc(p.img)}" alt="${esc(p.n)}" loading="lazy">`:"FLA"}</div><b>${esc(p.n)}</b>${p.nick?`<em>“${esc(p.nick)}”</em>`:""}<span>${esc(p.role)}${p.fac?" · "+esc(p.fac):""}</span></div>`).join("");
+ $("people").innerHTML=G.people.map(p=>`<div class="person">${av(p.img,p.n)}<b>${esc(p.n)}</b>${p.nick?`<em>“${esc(p.nick)}”</em>`:""}<span>${esc(p.role)}${p.fac?" · "+esc(p.fac):""}</span></div>`).join("");
  $("fac").innerHTML=C.faculties.map(f=>`<span class="chip">${esc(f)}</span>`).join("");
- $("fix").innerHTML=C.upcoming.map(([a,b,m])=>`<div class="row"><span>${esc(a)}</span><span class="vs">VS</span><span>${esc(b)}</span><span class="meta">${esc(m)}</span></div>`).join("");
- $("res").innerHTML=C.results.map(([a,x,y,b,m])=>`<div class="row"><span>${esc(a)}</span><span class="score">${esc(x)} - ${esc(y)}</span><span>${esc(b)}</span><span class="meta">${esc(m)}</span></div>`).join("");
- $("tbl").innerHTML=C.table.map((t,i)=>`<tr><td>${i+1}</td><td>${esc(t[0])}</td>${t.slice(1).map(v=>`<td>${esc(v)}</td>`).join("")}</tr>`).join("");
+ $("fix").innerHTML=C.upcoming.length?C.upcoming.map(([a,b,m])=>`<div class="row"><span>${esc(a)}</span><span class="vs">VS</span><span>${esc(b)}</span><span class="meta">${esc(m)}</span></div>`).join(""):empty("No fixtures yet. Check back soon.");
+ $("res").innerHTML=C.results.length?C.results.map(([a,x,y,b,m])=>`<div class="row"><span>${esc(a)}</span><span class="score">${esc(x)} - ${esc(y)}</span><span>${esc(b)}</span><span class="meta">${esc(m)}</span></div>`).join(""):empty("No results yet.");
+ $("tbl").innerHTML=C.table.length?C.table.map((t,i)=>`<tr><td>${i+1}</td><td>${esc(t[0])}</td>${t.slice(1).map(v=>`<td>${esc(v)}</td>`).join("")}</tr>`).join(""):`<tr><td colspan="8" style="text-align:center;font-weight:400;color:var(--mute)">Standings will appear when the season kicks off.</td></tr>`;
+ $("w-mm").innerHTML=wins(C.winners.mm);$("w-mw").innerHTML=wins(C.winners.mw);$("w-fr").innerHTML=wins(C.winners.fr);
  $("gal").innerHTML=C.gallery.length?C.gallery.map(g=>`<div><img src="${esc(g.src)}" alt="${esc(g.cap||"FLA photo")}" loading="lazy"></div>`).join(""):Array.from({length:8},(_,i)=>`<div>Photo ${i+1}</div>`).join("");
+ const S=C.spotlight,s=S.length?S[day%S.length]:null;
+ $("spot").innerHTML=s?`<div class="card spot">${av(s.img,s.n)}<div><h3>${esc(s.n)}</h3><em>${esc(s.year)}</em><p style="margin-top:8px">${esc(s.note)}</p></div></div>`:`<div class="card">${empty("Today's alumni spotlight is coming soon.")}</div>`;
  $("hof").innerHTML=C.fame.map(([t,n])=>`<div class="card"><h3>${esc(t)}</h3><small>${esc(n)}</small></div>`).join("");
  $("newsList").innerHTML=[...live,...C.news].map(([t,d],i)=>`<div class="card${i<live.length?" live":""}"><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join("");
- $("triv").innerHTML=C.trivia.map((t,i)=>`<div class="q"><h3>${esc(t.q)}</h3><div class="opts">${t.o.map((o,j)=>`<button class="opt" data-q="${i}" data-o="${j}">${esc(o)}</button>`).join("")}</div></div>`).join("");
+ const n=C.trivia.length,k=Math.min(3,n);dt=Array.from({length:k},(_,i)=>C.trivia[(day*k+i)%n]);
+ $("triv").innerHTML=dt.map((t,i)=>`<div class="q"><h3>${esc(t.q)}</h3><div class="opts">${t.o.map((o,j)=>`<button class="opt" data-q="${i}" data-o="${j}">${esc(o)}</button>`).join("")}</div></div>`).join("");
+ $("sp-pitch").textContent=C.sponsorPitch;
+ $("perks").innerHTML=C.sponsorPerks.map(p=>`<li>${esc(p)}</li>`).join("");
+ const ph=String(C.contact).replace(/\D/g,""),wa="234"+ph.replace(/^0/,"");
+ $("spCta").innerHTML=`<a class="btn" href="tel:${esc(ph)}">Call ${esc(C.contact)}</a><a class="btn alt" style="color:var(--ink);border-color:var(--green)" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">WhatsApp us</a>`;
  const sp=C.sponsors.map(s=>`<div class="slot on">${s.img?`<img src="${esc(s.img)}" alt="${esc(s.name)}">`:esc(s.name)}</div>`);
  while(sp.length<4)sp.push(`<div class="slot">Your brand here</div>`);
  $("spons").innerHTML=sp.join("");
- const w=C.social.whatsapp;const sb=$("spBtn");
- if(w){sb.href=w;sb.target="_blank";sb.rel="noopener";sb.removeAttribute("aria-disabled")}else{sb.removeAttribute("href");sb.setAttribute("aria-disabled","true")}
  const K=C.constitution;
  $("const").innerHTML=(K.text?`<p>${esc(K.text)}</p>`:"")+(K.url?`<p style="margin-top:14px"><a class="btn sm" href="${esc(K.url)}" target="_blank" rel="noopener">Open the full constitution</a></p>`:"")+(!K.text&&!K.url?`<p>The chapter’s constitution will be published here soon.</p><p style="margin-top:12px"><span class="tag">Coming soon</span></p>`:"");
- $("soc").innerHTML=[["x","X (Twitter)"],["youtube","YouTube"],["instagram","Instagram"],["whatsapp","WhatsApp group"]].map(([k,l])=>C.social[k]?`<a class="btn" href="${esc(C.social[k])}" target="_blank" rel="noopener">${l}</a>`:`<span class="btn" aria-disabled="true" title="Link coming soon">${l}</span>`).join("");
+ $("soc").innerHTML=[["x","X (Twitter)"],["youtube","YouTube"],["instagram","Instagram"],["whatsapp","WhatsApp group 1"],["whatsapp2","WhatsApp group 2"]].map(([k,l])=>C.social[k]?`<a class="btn" href="${esc(C.social[k])}" target="_blank" rel="noopener">${l}</a>`:`<span class="btn" aria-disabled="true" title="Link coming soon">${l}</span>`).join("");
 }
 document.addEventListener("click",e=>{
  const t=e.target.closest("[data-g]");if(t&&t.classList.contains("tab")&&!e.target.closest("dialog")){tab=t.dataset.g;render()}
- const o=e.target.closest(".opt");if(o){const q=C.trivia[o.dataset.q];[...o.parentNode.children].forEach((b,j)=>{b.classList.toggle("ok",j===q.a);if(b===o&&j!==q.a)b.classList.add("no")})}
+ const o=e.target.closest(".opt");if(o){const q=dt[o.dataset.q];[...o.parentNode.children].forEach((b,j)=>{b.classList.toggle("ok",j===q.a);if(b===o&&j!==q.a)b.classList.add("no")})}
 });
 render();
 
@@ -271,30 +313,42 @@ function shrink(file,max){return new Promise(res=>{const r=new FileReader();r.on
 function rows(){
  $("arows").innerHTML=C.groups[ag].people.map((p,i)=>`<div class="mrow"><div class="av">${p.img?`<img src="${esc(p.img)}" alt="">`:"FLA"}</div><div class="f"><input class="full" data-i="${i}" data-k="n" value="${esc(p.n)}" placeholder="Full name"><input data-i="${i}" data-k="nick" value="${esc(p.nick)}" placeholder="Nickname"><input data-i="${i}" data-k="role" value="${esc(p.role)}" placeholder="Role"><input data-i="${i}" data-k="fac" value="${esc(p.fac)}" placeholder="Faculty"><input type="file" accept="image/*" data-i="${i}" data-ph="1"><button class="btn sm full" data-del="${i}">Remove member</button></div></div>`).join("");
 }
+function wrows(){
+ const sp=wk==="sp";
+ $("wrows").innerHTML=wl().map((p,i)=>`<div class="mrow"><div class="av">${p.img?`<img src="${esc(p.img)}" alt="">`:"FLA"}</div><div class="f"><input class="full" data-wi="${i}" data-k="n" value="${esc(p.n)}" placeholder="${sp?"Alumni name":"Winner or team name"}"><input data-wi="${i}" data-k="year" value="${esc(p.year)}" placeholder="${sp?"Set / years":"Year won"}">${sp?`<input data-wi="${i}" data-k="note" value="${esc(p.note)}" placeholder="Why they are a legend">`:""}<input type="file" accept="image/*" data-wi="${i}" data-wph="1"><button class="btn sm full" data-wdel="${i}">Remove</button></div></div>`).join("");
+}
 function admin(){
  const d=$("adm");
  if(!unlocked){d.innerHTML=`<h3>Admin</h3><label for="pw">Passcode</label><input id="pw" type="password" autocomplete="off"><div class="bar"><button class="btn sm" id="go">Unlock</button><button class="btn sm" id="x1">Close</button></div><p class="note" id="msg"></p>`;
   $("go").onclick=()=>{if($("pw").value===C.passcode){unlocked=true;admin()}else $("msg").textContent="Wrong passcode."};$("x1").onclick=()=>$("dlg").close();return}
- const adv={upcoming:C.upcoming,results:C.results,table:C.table,fame:C.fame,news:C.news,trivia:C.trivia};
+ const adv={upcoming:C.upcoming,results:C.results,table:C.table,achievements:C.achievements,fame:C.fame,news:C.news,trivia:C.trivia};
  d.innerHTML=`<h3>Edit website</h3>
  <label>Breaking news banner</label><input id="a-br" value="${esc(C.breaking)}">
  <label>Who we are (About)</label><textarea id="a-ab">${esc(C.about)}</textarea>
  <label>Our mission</label><textarea id="a-mi">${esc(C.mission)}</textarea>
+ <label>History of FLA</label><textarea id="a-hi" style="min-height:140px">${esc(C.history)}</textarea>
  <label>Goal announcement from the game (use {n} for the goal count)</label><input id="a-gt" value="${esc((C.game&&C.game.goalText)||"")}">
  <h3>Constitution</h3><label>Constitution text (optional)</label><textarea id="a-ct">${esc(C.constitution.text)}</textarea>
  <label>Link to constitution PDF (optional)</label><input id="a-cu" value="${esc(C.constitution.url)}" placeholder="constitution.pdf or a full link">
  <h3>Members and executives</h3><label>Group</label><select id="ag">${Object.keys(C.groups).map(g=>`<option ${g===ag?"selected":""}>${esc(g)}</option>`).join("")}</select>
  <div id="arows"></div><div class="bar"><button class="btn sm" id="addm">Add member</button></div>
+ <h3>Winners and alumni spotlight</h3><label>List</label><select id="wsel"><option value="mm">FLA Main · Men winners</option><option value="mw">FLA Main · Women winners</option><option value="fr">FLA Freshers · Men winners</option><option value="sp">Alumni spotlight (rotates daily)</option></select>
+ <div id="wrows"></div><div class="bar"><button class="btn sm" id="addw">Add entry</button></div>
  <h3>Gallery</h3><label>Add photos</label><input type="file" id="gup" accept="image/*" multiple><div class="bar"><button class="btn sm" id="gclr">Clear gallery</button></div>
- <h3>Social links</h3>${["x","youtube","instagram","whatsapp"].map(k=>`<label>${k==="x"?"X":k[0].toUpperCase()+k.slice(1)} link</label><input id="s-${k}" value="${esc(C.social[k])}" placeholder="https://">`).join("")}
+ <h3>Social links</h3>${[["x","X"],["youtube","YouTube"],["instagram","Instagram"],["whatsapp","WhatsApp group 1"],["whatsapp2","WhatsApp group 2"]].map(([k,l])=>`<label>${l} link</label><input id="s-${k}" value="${esc(C.social[k])}" placeholder="https://">`).join("")}
  <h3>Faculties and sponsors</h3><label>Faculties (separate with commas)</label><input id="a-fa" value="${esc(C.faculties.join(", "))}">
- <label>Sponsors (one per line: Name | logo path, logo optional)</label><textarea id="a-sp">${esc(C.sponsors.map(s=>s.name+(s.img?" | "+s.img:"")).join("\n"))}</textarea>
- <h3>Advanced</h3><label>Fixtures, results, table, hall of fame, news and trivia (JSON)</label><textarea id="a-adv" style="min-height:160px;font-family:monospace;font-size:13px">${esc(JSON.stringify(adv,null,1))}</textarea>
+ <label>Sponsor pitch</label><textarea id="a-sx">${esc(C.sponsorPitch)}</textarea>
+ <label>What sponsors gain (one per line)</label><textarea id="a-pk">${esc(C.sponsorPerks.join("\n"))}</textarea>
+ <label>Sponsor contact number</label><input id="a-ph" value="${esc(C.contact)}">
+ <label>Current sponsors (one per line: Name | logo path, logo optional)</label><textarea id="a-sp">${esc(C.sponsors.map(s=>s.name+(s.img?" | "+s.img:"")).join("\n"))}</textarea>
+ <h3>Advanced</h3><label>Fixtures, results, table, achievements [year, text], hall of fame, news and trivia (JSON). Trivia: add as many questions as you like, three show per day.</label><textarea id="a-adv" style="min-height:160px;font-family:monospace;font-size:13px">${esc(JSON.stringify(adv,null,1))}</textarea>
  <div class="bar"><button class="btn sm" id="apply">Apply and preview</button><button class="btn sm" id="save">Save on this device</button><button class="btn sm" id="exp">Get content.js</button><button class="btn sm" id="rst">Reset</button><button class="btn sm" id="x2">Close</button></div>
  <p class="note" id="msg"></p><textarea id="out" hidden readonly style="min-height:140px;font-family:monospace;font-size:12px"></textarea>`;
- rows();
+ rows();$("wsel").value=wk;wrows();
  $("ag").onchange=e=>{ag=e.target.value;rows()};
+ $("wsel").onchange=e=>{wk=e.target.value;wrows()};
  $("addm").onclick=()=>{C.groups[ag].people.push({n:"New member",nick:"",role:"",fac:"",img:""});rows()};
+ $("addw").onclick=()=>{wl().push({n:"",year:"",note:"",img:""});wrows()};
  $("gup").onchange=async e=>{for(const f of e.target.files)C.gallery.push({src:await shrink(f,900),cap:""});render();$("msg").textContent=C.gallery.length+" photos in gallery."};
  $("gclr").onclick=()=>{C.gallery=[];render();$("msg").textContent="Gallery cleared."};
  $("apply").onclick=()=>{if(collect())$("msg").textContent="Applied. Scroll the page to preview."};
@@ -306,17 +360,24 @@ function admin(){
 function collect(){
  try{
   const a=JSON.parse($("a-adv").value);Object.assign(C,a);
-  C.breaking=$("a-br").value;C.game={goalText:$("a-gt").value};C.about=$("a-ab").value;C.mission=$("a-mi").value;
+  C.breaking=$("a-br").value;C.game={goalText:$("a-gt").value};C.about=$("a-ab").value;C.mission=$("a-mi").value;C.history=$("a-hi").value;
   C.constitution={text:$("a-ct").value,url:$("a-cu").value.trim()};
-  ["x","youtube","instagram","whatsapp"].forEach(k=>C.social[k]=$("s-"+k).value.trim());
+  ["x","youtube","instagram","whatsapp","whatsapp2"].forEach(k=>C.social[k]=$("s-"+k).value.trim());
   C.faculties=$("a-fa").value.split(",").map(s=>s.trim()).filter(Boolean);
+  C.sponsorPitch=$("a-sx").value;C.sponsorPerks=$("a-pk").value.split("\n").map(s=>s.trim()).filter(Boolean);C.contact=$("a-ph").value.trim();
   C.sponsors=$("a-sp").value.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const [n,i]=l.split("|").map(s=>s.trim());return{name:n,img:i||""}});
   render();return true;
  }catch(e){$("msg").textContent="The Advanced box has a typing error. Check the commas and quotes.";return false}
 }
-$("dlg").addEventListener("input",async e=>{const t=e.target;if(t.dataset.k){C.groups[ag].people[t.dataset.i][t.dataset.k]=t.value;render()}});
-$("dlg").addEventListener("change",async e=>{const t=e.target;if(t.dataset.ph&&t.files[0]){C.groups[ag].people[t.dataset.i].img=await shrink(t.files[0],400);rows();render()}});
-$("dlg").addEventListener("click",e=>{const b=e.target.closest("[data-del]");if(b){C.groups[ag].people.splice(+b.dataset.del,1);rows();render()}});
+$("dlg").addEventListener("input",e=>{const t=e.target;
+ if(t.dataset.wi!==undefined&&t.dataset.k){wl()[t.dataset.wi][t.dataset.k]=t.value;render()}
+ else if(t.dataset.k){C.groups[ag].people[t.dataset.i][t.dataset.k]=t.value;render()}});
+$("dlg").addEventListener("change",async e=>{const t=e.target;
+ if(t.dataset.wph&&t.files[0]){wl()[t.dataset.wi].img=await shrink(t.files[0],400);wrows();render()}
+ else if(t.dataset.ph&&t.files[0]){C.groups[ag].people[t.dataset.i].img=await shrink(t.files[0],400);rows();render()}});
+$("dlg").addEventListener("click",e=>{
+ const w=e.target.closest("[data-wdel]");if(w){wl().splice(+w.dataset.wdel,1);wrows();render();return}
+ const b=e.target.closest("[data-del]");if(b){C.groups[ag].people.splice(+b.dataset.del,1);rows();render()}});
 $("adminBtn").onclick=()=>{admin();$("dlg").showModal()};
 </script>
 </body>
