@@ -196,61 +196,88 @@ textarea{min-height:90px}
 <dialog id="dlg"><div id="adm"></div></dialog>
 
 <script src="content.js"></script>
-<script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getFirestore,doc,collection,onSnapshot,setDoc,addDoc,updateDoc,deleteDoc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const D=window.FLA_CONTENT;
-let C,unlocked=false,tab,ag,wk="mm",live=[],dt=[];
-try{const s=localStorage.getItem("fla-content");C=Object.assign(structuredClone(D),s?JSON.parse(s):{})}catch(e){C=structuredClone(D)}
-tab=Object.keys(C.groups)[0];ag=tab;
+const D=window.FLA_CONTENT,cfg=window.FLA_FIREBASE||{};
+let C={...D},FX=[],WIN={mm:[],mw:[],fr:[]},SPOT=[],GAL=[],user=null,db=null,auth=null,tab="",wk="mm",live=[],dt=[];
 const day=Math.floor(Date.now()/864e5);
 const empty=t=>`<p class="gnote">${t}</p>`;
+const L=s=>String(s||"").split("\n").map(x=>x.trim()).filter(Boolean).map(x=>x.split("|").map(y=>y.trim()));
+const LN=s=>String(s||"").split("\n").map(x=>x.trim()).filter(Boolean);
+const byT=(a,b)=>(a.t||0)-(b.t||0);
+const hasS=f=>f.ha!==""&&f.ha!=null&&f.aa!==""&&f.aa!=null;
+const fdate=f=>[f.date?new Date(f.date+"T00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short",year:"numeric"}):"",f.info].filter(Boolean).join(" · ");
 const av=(img,n)=>`<div class="av">${img?`<img src="${esc(img)}" alt="${esc(n)}" loading="lazy">`:"FLA"}</div>`;
+const groups=()=>{try{return JSON.parse(C.groupsJson)}catch(e){return JSON.parse(D.groupsJson)}};
+const msg=t=>{const m=$("msg");if(m)m.textContent=t};
+
+/* ===== Firebase ===== */
+if(cfg.apiKey&&!/^PASTE/.test(cfg.apiKey)){
+ try{
+  const app=initializeApp(cfg);db=getFirestore(app);auth=getAuth(app);
+  onSnapshot(doc(db,"site","main"),s=>{C={...D,...(s.exists()?s.data():{})};render()});
+  const sub=(name,fn)=>onSnapshot(collection(db,name),s=>{fn(s.docs.map(d=>({id:d.id,...d.data()})));render();if($("dlg").open&&user&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))lists()});
+  sub("fixtures",a=>FX=a);
+  sub("winners",a=>{WIN={mm:[],mw:[],fr:[]};a.forEach(w=>WIN[w.list]&&WIN[w.list].push(w))});
+  sub("spotlight",a=>SPOT=a);
+  sub("gallery",a=>GAL=a);
+  onAuthStateChanged(auth,u=>{user=u;if($("dlg").open)admin()});
+ }catch(e){console.error(e);db=null}
+}
+
+/* ===== Render ===== */
 function wins(a){
- if(!a||!a.length)return empty("Winners will be added soon.");
+ if(!a.length)return empty("Winners will be added soon.");
  return `<div class="people">`+[...a].sort((x,y)=>String(y.year).localeCompare(String(x.year))).map(w=>`<div class="person">${av(w.img,w.n)}<b>${esc(w.n)}</b><em>${esc(w.year)}</em></div>`).join("")+`</div>`;
 }
-function wl(){return wk==="sp"?C.spotlight:C.winners[wk]}
-
 function render(){
  $("brk").textContent=C.breaking;
  $("about-t").textContent=C.about;$("mission-t").textContent=C.mission;
  $("hist-t").textContent=C.history||"The story of FLA OOU will be told here soon.";
- $("ach").innerHTML=C.achievements.length?C.achievements.map(([y,t])=>`<li><b>${esc(y)}</b><br>${esc(t)}</li>`).join(""):`<li>${empty("Achievements will be added soon.")}</li>`;
- if(!C.groups[tab])tab=Object.keys(C.groups)[0];
- $("tabs").innerHTML=Object.keys(C.groups).map(g=>`<button class="tab" role="tab" data-g="${esc(g)}" aria-selected="${g===tab}">${esc(g)}</button>`).join("");
- const G=C.groups[tab];$("gnote").textContent=G.note||"";
+ const A=L(C.ach);
+ $("ach").innerHTML=A.length?A.map(([y,t])=>`<li><b>${esc(y)}</b><br>${esc(t)}</li>`).join(""):`<li>${empty("Achievements will be added soon.")}</li>`;
+ const GR=groups();if(!GR[tab])tab=Object.keys(GR)[0];
+ $("tabs").innerHTML=Object.keys(GR).map(g=>`<button class="tab" role="tab" data-g="${esc(g)}" aria-selected="${g===tab}">${esc(g)}</button>`).join("");
+ const G=GR[tab];$("gnote").textContent=G.note||"";
  $("people").innerHTML=G.people.map(p=>`<div class="person">${av(p.img,p.n)}<b>${esc(p.n)}</b>${p.nick?`<em>“${esc(p.nick)}”</em>`:""}<span>${esc(p.role)}${p.fac?" · "+esc(p.fac):""}</span></div>`).join("");
- $("fac").innerHTML=C.faculties.map(f=>`<span class="chip">${esc(f)}</span>`).join("");
- $("fix").innerHTML=C.upcoming.length?C.upcoming.map(([a,b,m])=>`<div class="row"><span>${esc(a)}</span><span class="vs">VS</span><span>${esc(b)}</span><span class="meta">${esc(m)}</span></div>`).join(""):empty("No fixtures yet. Check back soon.");
- $("res").innerHTML=C.results.length?C.results.map(([a,x,y,b,m])=>`<div class="row"><span>${esc(a)}</span><span class="score">${esc(x)} - ${esc(y)}</span><span>${esc(b)}</span><span class="meta">${esc(m)}</span></div>`).join(""):empty("No results yet.");
- $("tbl").innerHTML=C.table.length?C.table.map((t,i)=>`<tr><td>${i+1}</td><td>${esc(t[0])}</td>${t.slice(1).map(v=>`<td>${esc(v)}</td>`).join("")}</tr>`).join(""):`<tr><td colspan="8" style="text-align:center;font-weight:400;color:var(--mute)">Standings will appear when the season kicks off.</td></tr>`;
- $("w-mm").innerHTML=wins(C.winners.mm);$("w-mw").innerHTML=wins(C.winners.mw);$("w-fr").innerHTML=wins(C.winners.fr);
- $("gal").innerHTML=C.gallery.length?C.gallery.map(g=>`<div><img src="${esc(g.src)}" alt="${esc(g.cap||"FLA photo")}" loading="lazy"></div>`).join(""):Array.from({length:8},(_,i)=>`<div>Photo ${i+1}</div>`).join("");
- const S=C.spotlight,s=S.length?S[day%S.length]:null;
+ $("fac").innerHTML=String(C.faculties||"").split(",").map(s=>s.trim()).filter(Boolean).map(f=>`<span class="chip">${esc(f)}</span>`).join("");
+ const up=FX.filter(f=>!hasS(f)&&(f.a||f.b)).sort((a,b)=>(a.date||"9").localeCompare(b.date||"9")||byT(a,b));
+ const rs=FX.filter(f=>hasS(f)).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||byT(b,a));
+ $("fix").innerHTML=up.length?up.map(f=>`<div class="row"><span>${esc(f.a)}</span><span class="vs">VS</span><span>${esc(f.b)}</span><span class="meta">${esc(fdate(f))}</span></div>`).join(""):empty("No fixtures yet. Check back soon.");
+ $("res").innerHTML=rs.length?rs.map(f=>`<div class="row"><span>${esc(f.a)}</span><span class="score">${esc(f.ha)} - ${esc(f.aa)}</span><span>${esc(f.b)}</span><span class="meta">${esc(fdate(f))}</span></div>`).join(""):empty("No results yet.");
+ const T=L(C.table);
+ $("tbl").innerHTML=T.length?T.map((t,i)=>`<tr><td>${i+1}</td><td>${esc(t[0])}</td>${t.slice(1).map(v=>`<td>${esc(v)}</td>`).join("")}</tr>`).join(""):`<tr><td colspan="8" style="text-align:center;font-weight:400;color:var(--mute)">Standings will appear when the season kicks off.</td></tr>`;
+ $("w-mm").innerHTML=wins(WIN.mm);$("w-mw").innerHTML=wins(WIN.mw);$("w-fr").innerHTML=wins(WIN.fr);
+ $("gal").innerHTML=GAL.length?[...GAL].sort(byT).map(g=>`<div><img src="${esc(g.src)}" alt="FLA photo" loading="lazy"></div>`).join(""):Array.from({length:8},(_,i)=>`<div>Photo ${i+1}</div>`).join("");
+ const S=[...SPOT].sort(byT),s=S.length?S[day%S.length]:null;
  $("spot").innerHTML=s?`<div class="card spot">${av(s.img,s.n)}<div><h3>${esc(s.n)}</h3><em>${esc(s.year)}</em><p style="margin-top:8px">${esc(s.note)}</p></div></div>`:`<div class="card">${empty("Today's alumni spotlight is coming soon.")}</div>`;
- $("hof").innerHTML=C.fame.map(([t,n])=>`<div class="card"><h3>${esc(t)}</h3><small>${esc(n)}</small></div>`).join("");
- $("newsList").innerHTML=[...live,...C.news].map(([t,d],i)=>`<div class="card${i<live.length?" live":""}"><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join("");
- const n=C.trivia.length,k=Math.min(3,n);dt=Array.from({length:k},(_,i)=>C.trivia[(day*k+i)%n]);
+ $("hof").innerHTML=L(C.fame).map(([t,n])=>`<div class="card"><h3>${esc(t)}</h3><small>${esc(n)}</small></div>`).join("");
+ $("newsList").innerHTML=[...live,...L(C.news)].map(([t,d],i)=>`<div class="card${i<live.length?" live":""}"><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join("");
+ const TR=L(C.trivia).filter(p=>p.length>=4).map(p=>({q:p[0],o:p.slice(1,-1),a:(+p[p.length-1]||1)-1}));
+ const n=TR.length,k=Math.min(3,n);dt=Array.from({length:k},(_,i)=>TR[(day*k+i)%n]);
  $("triv").innerHTML=dt.map((t,i)=>`<div class="q"><h3>${esc(t.q)}</h3><div class="opts">${t.o.map((o,j)=>`<button class="opt" data-q="${i}" data-o="${j}">${esc(o)}</button>`).join("")}</div></div>`).join("");
  $("sp-pitch").textContent=C.sponsorPitch;
- $("perks").innerHTML=C.sponsorPerks.map(p=>`<li>${esc(p)}</li>`).join("");
+ $("perks").innerHTML=LN(C.perks).map(p=>`<li>${esc(p)}</li>`).join("");
  const ph=String(C.contact).replace(/\D/g,""),wa="234"+ph.replace(/^0/,"");
  $("spCta").innerHTML=`<a class="btn" href="tel:${esc(ph)}">Call ${esc(C.contact)}</a><a class="btn alt" style="color:var(--ink);border-color:var(--green)" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">WhatsApp us</a>`;
- const sp=C.sponsors.map(s=>`<div class="slot on">${s.img?`<img src="${esc(s.img)}" alt="${esc(s.name)}">`:esc(s.name)}</div>`);
+ const sp=L(C.sponsors).map(([nm,im])=>`<div class="slot on">${im?`<img src="${esc(im)}" alt="${esc(nm)}">`:esc(nm)}</div>`);
  while(sp.length<4)sp.push(`<div class="slot">Your brand here</div>`);
  $("spons").innerHTML=sp.join("");
- const K=C.constitution;
- $("const").innerHTML=(K.text?`<p>${esc(K.text)}</p>`:"")+(K.url?`<p style="margin-top:14px"><a class="btn sm" href="${esc(K.url)}" target="_blank" rel="noopener">Open the full constitution</a></p>`:"")+(!K.text&&!K.url?`<p>The chapter’s constitution will be published here soon.</p><p style="margin-top:12px"><span class="tag">Coming soon</span></p>`:"");
- $("soc").innerHTML=[["x","X (Twitter)"],["youtube","YouTube"],["instagram","Instagram"],["whatsapp","WhatsApp group 1"],["whatsapp2","WhatsApp group 2"]].map(([k,l])=>C.social[k]?`<a class="btn" href="${esc(C.social[k])}" target="_blank" rel="noopener">${l}</a>`:`<span class="btn" aria-disabled="true" title="Link coming soon">${l}</span>`).join("");
+ $("const").innerHTML=(C.constitutionText?`<p>${esc(C.constitutionText)}</p>`:"")+(C.constitutionUrl?`<p style="margin-top:14px"><a class="btn sm" href="${esc(C.constitutionUrl)}" target="_blank" rel="noopener">Open the full constitution</a></p>`:"")+(!C.constitutionText&&!C.constitutionUrl?`<p>The chapter’s constitution will be published here soon.</p><p style="margin-top:12px"><span class="tag">Coming soon</span></p>`:"");
+ $("soc").innerHTML=[["x","X (Twitter)"],["youtube","YouTube"],["instagram","Instagram"],["whatsapp","WhatsApp group 1"],["whatsapp2","WhatsApp group 2"]].map(([k,l])=>C[k]?`<a class="btn" href="${esc(C[k])}" target="_blank" rel="noopener">${l}</a>`:`<span class="btn" aria-disabled="true" title="Link coming soon">${l}</span>`).join("");
 }
 document.addEventListener("click",e=>{
- const t=e.target.closest("[data-g]");if(t&&t.classList.contains("tab")&&!e.target.closest("dialog")){tab=t.dataset.g;render()}
+ const t=e.target.closest("[data-g]");if(t&&t.classList.contains("tab")){tab=t.dataset.g;render()}
  const o=e.target.closest(".opt");if(o){const q=dt[o.dataset.q];[...o.parentNode.children].forEach((b,j)=>{b.classList.toggle("ok",j===q.a);if(b===o&&j!==q.a)b.classList.add("no")})}
 });
 render();
 
-// ===== Penalty game =====
+/* ===== Penalty game ===== */
 (function(){
 const cv=$("pitch"),g=cv.getContext("2d"),W=360,H=230,G={l:60,r:300,t:22,b:112},SP={x:180,y:198};
 let ball={x:SP.x,y:SP.y,s:1},kx=180,kt=0,kd=0,leg=0,res="",busy=false,goals=0,shots=0;
@@ -280,7 +307,7 @@ function draw(){
 }
 function score(){$("gscore").textContent="Goals "+goals+" · Shots "+shots}
 function announce(n){
- const tpl=(C.game&&C.game.goalText)||"GOAL! A fan just scored on the FLA pitch. Goals this visit: {n}";
+ const tpl=C.goalText||"GOAL! A fan just scored on the FLA pitch. Goals this visit: {n}";
  live.unshift(["⚽ Live from the pitch",tpl.replace("{n}",n)]);if(live.length>5)live.pop();render();
 }
 function shoot(px,py){
@@ -308,76 +335,77 @@ $("rnd").onclick=()=>shoot(G.l+20+Math.random()*(G.r-G.l-40),G.t+10+Math.random(
 draw();
 })();
 
-// ===== Admin =====
-function shrink(file,max){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const s=Math.min(1,max/Math.max(i.width,i.height)),c=document.createElement("canvas");c.width=i.width*s;c.height=i.height*s;c.getContext("2d").drawImage(i,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.8))};i.src=r.result};r.readAsDataURL(file)})}
-function rows(){
- $("arows").innerHTML=C.groups[ag].people.map((p,i)=>`<div class="mrow"><div class="av">${p.img?`<img src="${esc(p.img)}" alt="">`:"FLA"}</div><div class="f"><input class="full" data-i="${i}" data-k="n" value="${esc(p.n)}" placeholder="Full name"><input data-i="${i}" data-k="nick" value="${esc(p.nick)}" placeholder="Nickname"><input data-i="${i}" data-k="role" value="${esc(p.role)}" placeholder="Role"><input data-i="${i}" data-k="fac" value="${esc(p.fac)}" placeholder="Faculty"><input type="file" accept="image/*" data-i="${i}" data-ph="1"><button class="btn sm full" data-del="${i}">Remove member</button></div></div>`).join("");
+/* ===== Admin ===== */
+function shrink(file,max){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const s=Math.min(1,max/Math.max(i.width,i.height)),c=document.createElement("canvas");c.width=i.width*s;c.height=i.height*s;c.getContext("2d").drawImage(i,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.7))};i.src=r.result};r.readAsDataURL(file)})}
+const F_FX=[["a","Team A"],["b","Team B"],["date","Match date","date"],["info","Time · Venue"],["ha","Team A score (blank until played)","number"],["aa","Team B score","number"]];
+const F_W=[["n","Winner or team name","text",1],["year","Year won"]];
+const F_S=[["n","Alumni name","text",1],["year","Set / years"],["note","Why they are a legend"]];
+const SECTIONS=[
+["Site text",[["breaking","Breaking news banner","i"],["about","Who we are (About)","t"],["mission","Our mission","t"],["history","History of FLA","t",150],["goalText","Goal announcement from the game ({n} = goal count)","i"]]],
+["Achievements, Hall of Fame and News",[["ach","Achievements: one per line as Year | What happened","t",110],["fame","Hall of Fame categories: one per line as Title | Name","t"],["news","News: one per line as Headline | Details","t"]]],
+["League table",[["table","One team per line as Team | P | W | D | L | GD | Pts","t",110]]],
+["Daily trivia",[["trivia","One question per line as Question | Option 1 | Option 2 | Option 3 | Number of the right option. Three questions show per day, so keep a big pool.","t",240]]],
+["Faculties and sponsors",[["faculties","Faculties (separate with commas)","i"],["sponsorPitch","Sponsor pitch","t"],["perks","What sponsors gain (one per line)","t"],["contact","Sponsor contact number","i"],["sponsors","Current sponsors: one per line as Name | logo path (logo optional)","t"]]],
+["Social links",[["x","X link","i"],["youtube","YouTube link","i"],["instagram","Instagram link","i"],["whatsapp","WhatsApp group 1 link","i"],["whatsapp2","WhatsApp group 2 link","i"]]],
+["Constitution",[["constitutionText","Constitution text (optional)","t"],["constitutionUrl","Link to constitution PDF (optional)","i"]]],
+["Executives (advanced)",[["groupsJson","Executives as JSON. Photos are file paths like images/ug-06.jpg","t",200]]]
+];
+function erow(col,it,F,ph){
+ return `<div class="mrow"${ph?"":' style="grid-template-columns:1fr"'}>${ph?`<div class="av">${it.img?`<img src="${esc(it.img)}" alt="">`:"FLA"}</div>`:""}<div class="f">${F.map(([k,p,ty,fu])=>`<input ${fu?'class="full" ':""}type="${ty||"text"}" data-col="${col}" data-id="${it.id}" data-k="${k}" value="${esc(it[k])}" placeholder="${esc(p)}" aria-label="${esc(p)}">`).join("")}${ph?`<input type="file" accept="image/*" data-col="${col}" data-id="${it.id}" data-photo="1" aria-label="Photo">`:""}<button class="btn sm full" data-rm="${col}" data-id="${it.id}">Remove</button></div></div>`;
 }
-function wrows(){
- const sp=wk==="sp";
- $("wrows").innerHTML=wl().map((p,i)=>`<div class="mrow"><div class="av">${p.img?`<img src="${esc(p.img)}" alt="">`:"FLA"}</div><div class="f"><input class="full" data-wi="${i}" data-k="n" value="${esc(p.n)}" placeholder="${sp?"Alumni name":"Winner or team name"}"><input data-wi="${i}" data-k="year" value="${esc(p.year)}" placeholder="${sp?"Set / years":"Year won"}">${sp?`<input data-wi="${i}" data-k="note" value="${esc(p.note)}" placeholder="Why they are a legend">`:""}<input type="file" accept="image/*" data-wi="${i}" data-wph="1"><button class="btn sm full" data-wdel="${i}">Remove</button></div></div>`).join("");
+function lists(){
+ if(!$("fxrows"))return;
+ $("fxrows").innerHTML=[...FX].sort((a,b)=>(a.date||"9").localeCompare(b.date||"9")||byT(a,b)).map(f=>erow("fixtures",f,F_FX)).join("")||empty("No fixtures yet.");
+ $("wrows").innerHTML=[...WIN[wk]].sort(byT).map(w=>erow("winners",w,F_W,1)).join("")||empty("No winners in this list yet.");
+ $("srows").innerHTML=[...SPOT].sort(byT).map(s=>erow("spotlight",s,F_S,1)).join("")||empty("No alumni added yet.");
+ $("grows").innerHTML=[...GAL].sort(byT).map(g=>`<div class="mrow"><div class="av"><img src="${esc(g.src)}" alt=""></div><div class="f"><button class="btn sm full" data-rm="gallery" data-id="${g.id}">Remove photo</button></div></div>`).join("")||empty("No photos yet.");
 }
 function admin(){
  const d=$("adm");
- if(!unlocked){d.innerHTML=`<h3>Admin</h3><label for="pw">Passcode</label><input id="pw" type="password" autocomplete="off"><div class="bar"><button class="btn sm" id="go">Unlock</button><button class="btn sm" id="x1">Close</button></div><p class="note" id="msg"></p>`;
-  $("go").onclick=()=>{if($("pw").value===C.passcode){unlocked=true;admin()}else $("msg").textContent="Wrong passcode."};$("x1").onclick=()=>$("dlg").close();return}
- const adv={upcoming:C.upcoming,results:C.results,table:C.table,achievements:C.achievements,fame:C.fame,news:C.news,trivia:C.trivia};
- d.innerHTML=`<h3>Edit website</h3>
- <label>Breaking news banner</label><input id="a-br" value="${esc(C.breaking)}">
- <label>Who we are (About)</label><textarea id="a-ab">${esc(C.about)}</textarea>
- <label>Our mission</label><textarea id="a-mi">${esc(C.mission)}</textarea>
- <label>History of FLA</label><textarea id="a-hi" style="min-height:140px">${esc(C.history)}</textarea>
- <label>Goal announcement from the game (use {n} for the goal count)</label><input id="a-gt" value="${esc((C.game&&C.game.goalText)||"")}">
- <h3>Constitution</h3><label>Constitution text (optional)</label><textarea id="a-ct">${esc(C.constitution.text)}</textarea>
- <label>Link to constitution PDF (optional)</label><input id="a-cu" value="${esc(C.constitution.url)}" placeholder="constitution.pdf or a full link">
- <h3>Members and executives</h3><label>Group</label><select id="ag">${Object.keys(C.groups).map(g=>`<option ${g===ag?"selected":""}>${esc(g)}</option>`).join("")}</select>
- <div id="arows"></div><div class="bar"><button class="btn sm" id="addm">Add member</button></div>
- <h3>Winners and alumni spotlight</h3><label>List</label><select id="wsel"><option value="mm">FLA Main · Men winners</option><option value="mw">FLA Main · Women winners</option><option value="fr">FLA Freshers · Men winners</option><option value="sp">Alumni spotlight (rotates daily)</option></select>
- <div id="wrows"></div><div class="bar"><button class="btn sm" id="addw">Add entry</button></div>
- <h3>Gallery</h3><label>Add photos</label><input type="file" id="gup" accept="image/*" multiple><div class="bar"><button class="btn sm" id="gclr">Clear gallery</button></div>
- <h3>Social links</h3>${[["x","X"],["youtube","YouTube"],["instagram","Instagram"],["whatsapp","WhatsApp group 1"],["whatsapp2","WhatsApp group 2"]].map(([k,l])=>`<label>${l} link</label><input id="s-${k}" value="${esc(C.social[k])}" placeholder="https://">`).join("")}
- <h3>Faculties and sponsors</h3><label>Faculties (separate with commas)</label><input id="a-fa" value="${esc(C.faculties.join(", "))}">
- <label>Sponsor pitch</label><textarea id="a-sx">${esc(C.sponsorPitch)}</textarea>
- <label>What sponsors gain (one per line)</label><textarea id="a-pk">${esc(C.sponsorPerks.join("\n"))}</textarea>
- <label>Sponsor contact number</label><input id="a-ph" value="${esc(C.contact)}">
- <label>Current sponsors (one per line: Name | logo path, logo optional)</label><textarea id="a-sp">${esc(C.sponsors.map(s=>s.name+(s.img?" | "+s.img:"")).join("\n"))}</textarea>
- <h3>Advanced</h3><label>Fixtures, results, table, achievements [year, text], hall of fame, news and trivia (JSON). Trivia: add as many questions as you like, three show per day.</label><textarea id="a-adv" style="min-height:160px;font-family:monospace;font-size:13px">${esc(JSON.stringify(adv,null,1))}</textarea>
- <div class="bar"><button class="btn sm" id="apply">Apply and preview</button><button class="btn sm" id="save">Save on this device</button><button class="btn sm" id="exp">Get content.js</button><button class="btn sm" id="rst">Reset</button><button class="btn sm" id="x2">Close</button></div>
- <p class="note" id="msg"></p><textarea id="out" hidden readonly style="min-height:140px;font-family:monospace;font-size:12px"></textarea>`;
- rows();$("wsel").value=wk;wrows();
- $("ag").onchange=e=>{ag=e.target.value;rows()};
- $("wsel").onchange=e=>{wk=e.target.value;wrows()};
- $("addm").onclick=()=>{C.groups[ag].people.push({n:"New member",nick:"",role:"",fac:"",img:""});rows()};
- $("addw").onclick=()=>{wl().push({n:"",year:"",note:"",img:""});wrows()};
- $("gup").onchange=async e=>{for(const f of e.target.files)C.gallery.push({src:await shrink(f,900),cap:""});render();$("msg").textContent=C.gallery.length+" photos in gallery."};
- $("gclr").onclick=()=>{C.gallery=[];render();$("msg").textContent="Gallery cleared."};
- $("apply").onclick=()=>{if(collect())$("msg").textContent="Applied. Scroll the page to preview."};
- $("save").onclick=()=>{if(!collect())return;try{localStorage.setItem("fla-content",JSON.stringify(C));$("msg").textContent="Saved on this device only. Use Get content.js to publish for everyone."}catch(e){$("msg").textContent="Could not save here. Use Get content.js."}};
- $("exp").onclick=()=>{if(!collect())return;const code="window.FLA_CONTENT="+JSON.stringify(C,null,1)+";\n";const o=$("out");o.hidden=false;o.value=code;try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([code],{type:"text/javascript"}));a.download="content.js";a.click()}catch(e){}$("msg").textContent="Upload this as content.js to GitHub (replace the old one). You can also copy the text below."};
- $("rst").onclick=()=>{try{localStorage.removeItem("fla-content")}catch(e){}C=structuredClone(D);ag=tab=Object.keys(C.groups)[0];render();admin()};
+ if(!db){d.innerHTML=`<h3>Admin</h3><p>Firebase is not connected yet. Paste your Firebase details at the top of content.js.</p><div class="bar"><button class="btn sm" id="x1">Close</button></div>`;$("x1").onclick=()=>$("dlg").close();return}
+ if(!user){
+  d.innerHTML=`<h3>Admin sign in</h3><label for="em">Email</label><input id="em" type="email" autocomplete="username"><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password"><div class="bar"><button class="btn sm" id="go">Sign in</button><button class="btn sm" id="x1">Close</button></div><p class="note" id="msg"></p>`;
+  $("go").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("em").value.trim(),$("pw").value)}catch(e){msg("Wrong email or password.")}};
+  $("x1").onclick=()=>$("dlg").close();return}
+ const fld=([k,l,ty,h])=>`<label for="f-${k}">${l}</label>${ty==="t"?`<textarea id="f-${k}" data-f="${k}" style="min-height:${h||90}px">${esc(C[k])}</textarea>`:`<input id="f-${k}" data-f="${k}" value="${esc(C[k])}">`}`;
+ d.innerHTML=`<h3>Edit website</h3><p class="note">Fixtures, winners, spotlight and photos save by themselves as you type. The text sections at the bottom need the Save button.</p>
+ <h3>Match fixtures and results</h3><p class="note">Leave both scores blank for an upcoming match. Fill both once it is played and it moves to Results.</p>
+ <div id="fxrows"></div><div class="bar"><button class="btn sm" data-add="fixtures">Add fixture</button></div>
+ <h3>Previous winners</h3><label for="wsel">List</label><select id="wsel"><option value="mm">FLA Main · Men</option><option value="mw">FLA Main · Women</option><option value="fr">FLA Freshers · Men</option></select>
+ <div id="wrows"></div><div class="bar"><button class="btn sm" data-add="winners">Add winner</button></div>
+ <h3>Alumni spotlight of the day</h3><p class="note">The site shows a different alumnus each day, rotating through this list.</p>
+ <div id="srows"></div><div class="bar"><button class="btn sm" data-add="spotlight">Add alumnus</button></div>
+ <h3>Gallery</h3><label for="gup">Add photos</label><input type="file" id="gup" accept="image/*" multiple><div id="grows"></div>
+ ${SECTIONS.map(([h,fs])=>`<h3>${h}</h3>${fs.map(fld).join("")}`).join("")}
+ <div class="bar"><button class="btn sm" id="savef">Save text sections</button><button class="btn sm" id="out">Sign out</button><button class="btn sm" id="x2">Close</button></div><p class="note" id="msg"></p>`;
+ $("wsel").value=wk;lists();
+ $("wsel").onchange=e=>{wk=e.target.value;lists()};
+ $("gup").onchange=async e=>{try{for(const f of e.target.files)await addDoc(collection(db,"gallery"),{src:await shrink(f,900),t:Date.now()});msg("Photos added.");e.target.value=""}catch(err){msg("Could not save: "+err.message)}};
+ $("savef").onclick=async()=>{const o={};document.querySelectorAll("#adm [data-f]").forEach(el=>o[el.dataset.f]=el.value);
+  try{JSON.parse(o.groupsJson)}catch(e){return msg("The Executives box has a typing error. Check the commas and quotes.")}
+  try{await setDoc(doc(db,"site","main"),o,{merge:true});msg("Saved. The live site is updated.")}catch(err){msg("Could not save: "+err.message)}};
+ $("out").onclick=()=>signOut(auth);
  $("x2").onclick=()=>$("dlg").close();
 }
-function collect(){
+$("dlg").addEventListener("change",async e=>{
+ const t=e.target,{col,id,k}=t.dataset;if(!col||!db)return;
  try{
-  const a=JSON.parse($("a-adv").value);Object.assign(C,a);
-  C.breaking=$("a-br").value;C.game={goalText:$("a-gt").value};C.about=$("a-ab").value;C.mission=$("a-mi").value;C.history=$("a-hi").value;
-  C.constitution={text:$("a-ct").value,url:$("a-cu").value.trim()};
-  ["x","youtube","instagram","whatsapp","whatsapp2"].forEach(k=>C.social[k]=$("s-"+k).value.trim());
-  C.faculties=$("a-fa").value.split(",").map(s=>s.trim()).filter(Boolean);
-  C.sponsorPitch=$("a-sx").value;C.sponsorPerks=$("a-pk").value.split("\n").map(s=>s.trim()).filter(Boolean);C.contact=$("a-ph").value.trim();
-  C.sponsors=$("a-sp").value.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const [n,i]=l.split("|").map(s=>s.trim());return{name:n,img:i||""}});
-  render();return true;
- }catch(e){$("msg").textContent="The Advanced box has a typing error. Check the commas and quotes.";return false}
-}
-$("dlg").addEventListener("input",e=>{const t=e.target;
- if(t.dataset.wi!==undefined&&t.dataset.k){wl()[t.dataset.wi][t.dataset.k]=t.value;render()}
- else if(t.dataset.k){C.groups[ag].people[t.dataset.i][t.dataset.k]=t.value;render()}});
-$("dlg").addEventListener("change",async e=>{const t=e.target;
- if(t.dataset.wph&&t.files[0]){wl()[t.dataset.wi].img=await shrink(t.files[0],400);wrows();render()}
- else if(t.dataset.ph&&t.files[0]){C.groups[ag].people[t.dataset.i].img=await shrink(t.files[0],400);rows();render()}});
-$("dlg").addEventListener("click",e=>{
- const w=e.target.closest("[data-wdel]");if(w){wl().splice(+w.dataset.wdel,1);wrows();render();return}
- const b=e.target.closest("[data-del]");if(b){C.groups[ag].people.splice(+b.dataset.del,1);rows();render()}});
+  if(t.dataset.photo){if(t.files[0]){await updateDoc(doc(db,col,id),{img:await shrink(t.files[0],400)});msg("Photo saved.");lists()}}
+  else{await updateDoc(doc(db,col,id),{[k]:t.value});msg("Saved.")}
+ }catch(err){msg("Could not save: "+err.message)}
+});
+$("dlg").addEventListener("click",async e=>{
+ try{
+  const ad=e.target.closest("[data-add]");
+  if(ad&&db){const c=ad.dataset.add,o={t:Date.now()};
+   if(c==="fixtures")Object.assign(o,{a:"",b:"",date:"",info:"",ha:"",aa:""});
+   else if(c==="winners")Object.assign(o,{list:wk,n:"",year:"",img:""});
+   else Object.assign(o,{n:"",year:"",note:"",img:""});
+   await addDoc(collection(db,c),o);return}
+  const rm=e.target.closest("[data-rm]");
+  if(rm&&db&&confirm("Remove this entry?"))await deleteDoc(doc(db,rm.dataset.rm,rm.dataset.id));
+ }catch(err){msg("Could not save: "+err.message)}
+});
 $("adminBtn").onclick=()=>{admin();$("dlg").showModal()};
 </script>
 </body>
