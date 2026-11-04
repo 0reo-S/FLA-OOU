@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FLA OOU Chapter | Football Lovers Association</title>
+<link rel="icon" href="logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--green:#0e5a2b;--green-d:#08381b;--orange:#e98a12;--gold:#d3a21f;--bg:#fbfcfa;--ink:#12231a;--mute:#52665a;--card:#fff;--line:#dce5de;--h2:#0e5a2b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1510;--ink:#eaf2ec;--mute:#9db3a4;--card:#12211a;--line:#24382c;--h2:#6fd093}}
+:root[data-theme="dark"]{--bg:#0b1510;--ink:#eaf2ec;--mute:#9db3a4;--card:#12211a;--line:#24382c;--h2:#6fd093}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:calc(64px + env(safe-area-inset-top,0px))}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 Barlow,system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--green-d);z-index:30}
+h1,h2,h3{font-family:"Barlow Condensed",Impact,sans-serif;font-weight:800;line-height:1.02;margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--green-d);display:flex;align-items:center;gap:6px;padding:8px 14px;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav img{width:40px;height:40px;border-radius:50%;background:#fff;flex:none;margin-right:8px}
+nav a{color:#d9eadf;text-decoration:none;font-weight:600;font-size:15px;padding:8px 12px;border-radius:99px;white-space:nowrap}
+nav a:hover{background:rgba(255,255,255,.12)}
+.breaking{display:flex;align-items:center;gap:14px;background:#b3141a;color:#fff;padding:10px 16px;font-weight:600}
+.breaking b{background:#fff;color:#b3141a;font:800 18px "Barlow Condensed";padding:2px 10px;border-radius:4px;flex:none;letter-spacing:.04em}
+.breaking span{font-size:18px}
+.breaking::after{content:"";width:10px;height:10px;border-radius:50%;background:#fff;margin-left:auto;flex:none;animation:p 1.4s infinite}
+@keyframes p{50%{opacity:.2}}
+.hero{background:var(--green-d);color:#fff;position:relative;overflow:hidden;text-align:center;padding:56px 20px 72px}
+.hero::before{content:"";position:absolute;left:50%;top:50%;width:min(120vw,720px);aspect-ratio:1;transform:translate(-50%,-50%);border:2px solid rgba(255,255,255,.1);border-radius:50%}
+.hero::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:2px solid rgba(255,255,255,.1)}
+.hero>*{position:relative;z-index:1}
+.badge{width:min(58vw,250px);aspect-ratio:1;border-radius:50%;background:#fff;object-fit:cover;border:6px solid var(--orange);box-shadow:0 0 0 6px rgba(255,255,255,.12)}
+.hero h1{font-size:clamp(40px,10vw,84px);font-style:italic;margin-top:26px}
+.hero p{max-width:34ch;margin:14px auto 26px;color:#cfe3d6;font-size:19px}
+.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-block;padding:13px 24px;border-radius:99px;font:600 16px Barlow,sans-serif;text-decoration:none;background:var(--orange);color:#1b1200;border:0;cursor:pointer}
+.btn.alt{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5)}
+.btn.sm{padding:9px 16px;font-size:15px}
+.btn[aria-disabled="true"]{opacity:.5;cursor:default}
+section{max-width:1000px;margin:0 auto;padding:64px 20px 8px}
+h2{font-size:clamp(34px,7vw,52px);font-style:italic;color:var(--h2)}
+.lead{color:var(--mute);max-width:60ch;margin:10px 0 26px}
+.about{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+.card h3{font-size:26px;margin-bottom:6px}
+.card p{margin:0;white-space:pre-wrap}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tab{font:600 15px Barlow,sans-serif;padding:10px 18px;border-radius:99px;border:2px solid var(--green);background:transparent;color:var(--ink);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--green);color:#fff}
+.gnote{color:var(--mute);margin:0 0 20px;min-height:1.6em}
+.people{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.person{text-align:center}
+.av{width:100%;aspect-ratio:4/5;border-radius:14px;background:linear-gradient(145deg,var(--green),var(--green-d));display:grid;place-items:center;color:rgba(255,255,255,.55);font:800 40px "Barlow Condensed";overflow:hidden;border:3px solid var(--card);outline:2px solid var(--orange)}
+.av img{width:100%;height:100%;object-fit:cover;transform:scale(1.05)}
+.person b{display:block;margin-top:12px;line-height:1.2}
+.person em{display:block;color:var(--orange);font-size:15px}
+.person span{color:var(--mute);font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{background:var(--card);border:2px solid var(--green);border-radius:10px;padding:8px 18px;font:800 22px "Barlow Condensed"}
+.split{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+.row{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);text-align:center;font-weight:600}
+.row:last-child{border:0}
+.row .meta{grid-column:1/-1;color:var(--mute);font-weight:400;font-size:14px}
+.score{background:var(--green);color:#fff;border-radius:8px;padding:2px 12px;font:800 22px "Barlow Condensed"}
+.vs{color:var(--orange);font:800 18px "Barlow Condensed"}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:480px}
+th,td{padding:12px 14px;text-align:center}
+th:nth-child(2),td:nth-child(2){text-align:left}
+thead{background:var(--green);color:#fff}
+tbody tr+tr{border-top:1px solid var(--line)}
+td:last-child{font-weight:800}
+.gal{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.gal div{aspect-ratio:1;border-radius:12px;display:grid;place-items:center;color:rgba(255,255,255,.7);font-weight:600;background:linear-gradient(135deg,var(--green),var(--green-d));overflow:hidden}
+.gal div:nth-child(3n){background:linear-gradient(135deg,var(--orange),#b36a05)}
+.gal img{width:100%;height:100%;object-fit:cover}
+.hof{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.hof .card{border-top:5px solid var(--gold)}
+.hof small{color:var(--mute)}
+.news{display:grid;gap:14px}
+.soon{background:var(--green-d);color:#fff;border-radius:18px;padding:34px 24px;text-align:center}
+.soon h2{color:#fff}
+.soon p{color:#cfe3d6;max-width:46ch;margin:12px auto 0}
+.tag{display:inline-block;background:var(--orange);color:#1b1200;font-weight:600;border-radius:99px;padding:4px 14px;font-size:14px}
+.q{margin-bottom:18px}
+.q h3{font-size:24px;margin-bottom:10px}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{font:600 15px Barlow,sans-serif;padding:9px 16px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.opt.ok{background:#1c8a46;color:#fff;border-color:#1c8a46}
+.opt.no{background:#b3141a;color:#fff;border-color:#b3141a}
+.spons{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));margin-bottom:20px}
+.slot{border:2px dashed var(--line);border-radius:14px;min-height:96px;display:grid;place-items:center;text-align:center;padding:12px;color:var(--mute);font-weight:600}
+.slot.on{border:2px solid var(--gold);color:var(--ink);background:var(--card)}
+.slot img{max-width:100%;max-height:60px}
+.follow{display:flex;gap:12px;flex-wrap:wrap}
+.note{color:var(--mute);font-size:14px;margin-top:10px}
+footer{margin-top:72px;background:var(--green-d);color:#cfe3d6;text-align:center;padding:34px 20px calc(34px + env(safe-area-inset-bottom,0px))}
+footer img{width:72px;border-radius:50%;background:#fff}
+footer .tab{color:#cfe3d6;border-color:rgba(255,255,255,.35);padding:6px 14px;font-size:14px}
+dialog{width:min(94vw,680px);max-height:90vh;border:0;border-radius:16px;padding:20px;background:var(--card);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog h3{font-size:30px;margin:18px 0 8px;color:var(--h2)}
+dialog h3:first-child{margin-top:0}
+dialog label{display:block;font-weight:600;font-size:15px;margin:10px 0 4px}
+input,textarea,select{width:100%;font:inherit;font-size:16px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+textarea{min-height:90px}
+.mrow{border:1px solid var(--line);border-radius:10px;padding:10px;margin:8px 0;display:grid;gap:6px;grid-template-columns:64px 1fr}
+.mrow .av{aspect-ratio:4/5;border-radius:8px;font-size:22px}
+.mrow .f{display:grid;gap:6px;grid-template-columns:1fr 1fr}
+.mrow .full{grid-column:1/-1}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+#pitch{width:100%;max-width:520px;height:auto;display:block;margin:0 auto 12px;border-radius:12px;cursor:crosshair;touch-action:manipulation}
+.pbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.live{border-left:6px solid var(--orange)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.breaking::after{animation:none}}
+</style>
+</head>
+<body>
+<nav aria-label="Main">
+<img src="logo.jpg" alt="FLA logo">
+<a href="#about">About</a><a href="#leadership">Leadership</a><a href="#faculties">Faculties</a><a href="#matches">Matches</a><a href="#tables">Tables</a><a href="#gallery">Gallery</a><a href="#fame">Hall of Fame</a><a href="#news">News</a><a href="#play">Play</a><a href="#trivia">Trivia</a><a href="#sponsors">Sponsors</a><a href="#constitution">Constitution</a><a href="#follow">Follow us</a>
+</nav>
+<div class="breaking"><b>BREAKING</b><span id="brk"></span></div>
+
+<header class="hero">
+<img class="badge" src="logo.jpg" alt="Football Lovers Association, OOU Chapter crest">
+<h1>Football Lovers Association</h1>
+<p>OOU Chapter. Where every Olabisi Onabanjo University football fan has a team.</p>
+<div class="btns"><a class="btn" href="#matches">See fixtures</a><a class="btn alt" href="#leadership">Meet the executives</a></div>
+</header>
+
+<section id="about"><h2>About FLA</h2>
+<div class="about"><div class="card"><h3>Who we are</h3><p id="about-t"></p></div><div class="card"><h3>Our mission</h3><p id="mission-t"></p></div></div></section>
+
+<section id="leadership"><h2>Leadership</h2>
+<p class="lead">The people who run and have run FLA at OOU.</p>
+<div class="tabs" role="tablist" id="tabs"></div><p class="gnote" id="gnote"></p><div class="people" id="people"></div></section>
+
+<section id="faculties"><h2>Participating faculties</h2>
+<p class="lead">Faculties and departments taking part in FLA competitions.</p><div class="chips" id="fac"></div></section>
+
+<section id="matches"><h2>Matches</h2><p class="lead">Upcoming fixtures and latest results.</p>
+<div class="split"><div class="card"><h3>Upcoming</h3><div id="fix"></div></div><div class="card"><h3>Results</h3><div id="res"></div></div></div></section>
+
+<section id="tables"><h2>Tables</h2><p class="lead">Current standings.</p>
+<div class="scroll"><table><thead><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead><tbody id="tbl"></tbody></table></div></section>
+
+<section id="gallery"><h2>Gallery</h2><p class="lead">Moments from matches and events.</p><div class="gal" id="gal"></div></section>
+
+<section id="fame"><h2>Hall of Fame</h2><p class="lead">Legends of FLA OOU.</p><div class="hof" id="hof"></div></section>
+
+<section id="news"><h2>News and events</h2><p class="lead">Announcements from the executive.</p><div class="news" id="newsList"></div></section>
+
+<section id="play"><h2>Take a shot</h2><p class="lead">Tap the goal where you want to shoot. Beat the keeper and a goal announcement appears in News.</p><div class="card"><canvas id="pitch" width="360" height="230" role="img" aria-label="Penalty shootout game. Tap the goal to shoot."></canvas><div class="pbar"><b id="gscore">Goals 0 · Shots 0</b><button class="btn sm" id="rnd">Shoot at random</button></div><p class="gnote" id="gmsg"></p></div></section>
+
+<section id="trivia"><h2>Football trivia</h2><p class="lead">Tap an answer to test yourself.</p><div class="card" id="triv"></div></section>
+
+<section id="fantasy"><div class="soon"><span class="tag">Coming soon</span><h2 style="margin-top:14px">FLA Fantasy League</h2><p>Pick your squad, beat your friends and climb the campus leaderboard. This section is on the way.</p></div></section>
+
+<section id="sponsors"><h2>Sponsors</h2><p class="lead">Brands backing FLA events. Want your brand here?</p><div class="spons" id="spons"></div><a class="btn sm" id="spBtn">Become a sponsor</a></section>
+
+<section id="constitution"><h2>Constitution</h2><div class="card" id="const" style="margin-top:20px"></div></section>
+
+<section id="follow"><h2>Follow FLA</h2><p class="lead">Join the community on our channels.</p><div class="follow" id="soc"></div></section>
+
+<footer><img src="logo.jpg" alt=""><p><b>Football Lovers Association, OOU Chapter</b><br>Olabisi Onabanjo University</p><p>© 2026 FLA OOU Chapter</p><button class="tab" id="adminBtn">Admin</button></footer>
+
+<dialog id="dlg"><div id="adm"></div></dialog>
+
+<script src="content.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const D=window.FLA_CONTENT;
+let C,unlocked=false,tab,ag,live=[];
+try{const s=localStorage.getItem("fla-content");C=Object.assign(structuredClone(D),s?JSON.parse(s):{})}catch(e){C=structuredClone(D)}
+tab=Object.keys(C.groups)[0];ag=tab;
+
+function render(){
+ $("brk").textContent=C.breaking;
+ $("about-t").textContent=C.about;$("mission-t").textContent=C.mission;
+ if(!C.groups[tab])tab=Object.keys(C.groups)[0];
+ $("tabs").innerHTML=Object.keys(C.groups).map(g=>`<button class="tab" role="tab" data-g="${esc(g)}" aria-selected="${g===tab}">${esc(g)}</button>`).join("");
+ const G=C.groups[tab];$("gnote").textContent=G.note||"";
+ $("people").innerHTML=G.people.map(p=>`<div class="person"><div class="av">${p.img?`<img src="${esc(p.img)}" alt="${esc(p.n)}" loading="lazy">`:"FLA"}</div><b>${esc(p.n)}</b>${p.nick?`<em>“${esc(p.nick)}”</em>`:""}<span>${esc(p.role)}${p.fac?" · "+esc(p.fac):""}</span></div>`).join("");
+ $("fac").innerHTML=C.faculties.map(f=>`<span class="chip">${esc(f)}</span>`).join("");
+ $("fix").innerHTML=C.upcoming.map(([a,b,m])=>`<div class="row"><span>${esc(a)}</span><span class="vs">VS</span><span>${esc(b)}</span><span class="meta">${esc(m)}</span></div>`).join("");
+ $("res").innerHTML=C.results.map(([a,x,y,b,m])=>`<div class="row"><span>${esc(a)}</span><span class="score">${esc(x)} - ${esc(y)}</span><span>${esc(b)}</span><span class="meta">${esc(m)}</span></div>`).join("");
+ $("tbl").innerHTML=C.table.map((t,i)=>`<tr><td>${i+1}</td><td>${esc(t[0])}</td>${t.slice(1).map(v=>`<td>${esc(v)}</td>`).join("")}</tr>`).join("");
+ $("gal").innerHTML=C.gallery.length?C.gallery.map(g=>`<div><img src="${esc(g.src)}" alt="${esc(g.cap||"FLA photo")}" loading="lazy"></div>`).join(""):Array.from({length:8},(_,i)=>`<div>Photo ${i+1}</div>`).join("");
+ $("hof").innerHTML=C.fame.map(([t,n])=>`<div class="card"><h3>${esc(t)}</h3><small>${esc(n)}</small></div>`).join("");
+ $("newsList").innerHTML=[...live,...C.news].map(([t,d],i)=>`<div class="card${i<live.length?" live":""}"><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join("");
+ $("triv").innerHTML=C.trivia.map((t,i)=>`<div class="q"><h3>${esc(t.q)}</h3><div class="opts">${t.o.map((o,j)=>`<button class="opt" data-q="${i}" data-o="${j}">${esc(o)}</button>`).join("")}</div></div>`).join("");
+ const sp=C.sponsors.map(s=>`<div class="slot on">${s.img?`<img src="${esc(s.img)}" alt="${esc(s.name)}">`:esc(s.name)}</div>`);
+ while(sp.length<4)sp.push(`<div class="slot">Your brand here</div>`);
+ $("spons").innerHTML=sp.join("");
+ const w=C.social.whatsapp;const sb=$("spBtn");
+ if(w){sb.href=w;sb.target="_blank";sb.rel="noopener";sb.removeAttribute("aria-disabled")}else{sb.removeAttribute("href");sb.setAttribute("aria-disabled","true")}
+ const K=C.constitution;
+ $("const").innerHTML=(K.text?`<p>${esc(K.text)}</p>`:"")+(K.url?`<p style="margin-top:14px"><a class="btn sm" href="${esc(K.url)}" target="_blank" rel="noopener">Open the full constitution</a></p>`:"")+(!K.text&&!K.url?`<p>The chapter’s constitution will be published here soon.</p><p style="margin-top:12px"><span class="tag">Coming soon</span></p>`:"");
+ $("soc").innerHTML=[["x","X (Twitter)"],["youtube","YouTube"],["instagram","Instagram"],["whatsapp","WhatsApp group"]].map(([k,l])=>C.social[k]?`<a class="btn" href="${esc(C.social[k])}" target="_blank" rel="noopener">${l}</a>`:`<span class="btn" aria-disabled="true" title="Link coming soon">${l}</span>`).join("");
+}
+document.addEventListener("click",e=>{
+ const t=e.target.closest("[data-g]");if(t&&t.classList.contains("tab")&&!e.target.closest("dialog")){tab=t.dataset.g;render()}
+ const o=e.target.closest(".opt");if(o){const q=C.trivia[o.dataset.q];[...o.parentNode.children].forEach((b,j)=>{b.classList.toggle("ok",j===q.a);if(b===o&&j!==q.a)b.classList.add("no")})}
+});
+render();
+
+// ===== Penalty game =====
+(function(){
+const cv=$("pitch"),g=cv.getContext("2d"),W=360,H=230,G={l:60,r:300,t:22,b:112},SP={x:180,y:198};
+let ball={x:SP.x,y:SP.y,s:1},kx=180,kt=0,kd=0,leg=0,res="",busy=false,goals=0,shots=0;
+function line(a,b,c,d){g.beginPath();g.moveTo(a,b);g.lineTo(c,d);g.stroke()}
+function draw(){
+ g.fillStyle="#1f7a3a";g.fillRect(0,0,W,H);
+ for(let i=0;i<6;i+=2){g.fillStyle="rgba(0,0,0,.07)";g.fillRect(0,i*H/6,W,H/6)}
+ g.strokeStyle="rgba(255,255,255,.7)";g.lineWidth=2;g.strokeRect(40,G.b,280,100);
+ g.fillStyle="#fff";g.beginPath();g.arc(SP.x,SP.y,3,0,7);g.fill();
+ g.strokeStyle="rgba(255,255,255,.3)";g.lineWidth=1;
+ for(let a=G.l;a<=G.r;a+=12)line(a,G.t,a,G.b);
+ for(let b=G.t;b<=G.b;b+=12)line(G.l,b,G.r,b);
+ g.strokeStyle="#fff";g.lineWidth=5;g.beginPath();g.moveTo(G.l,G.b);g.lineTo(G.l,G.t);g.lineTo(G.r,G.t);g.lineTo(G.r,G.b);g.stroke();
+ g.save();g.translate(kx,G.b-4);g.rotate(kd*.9*kt);
+ g.fillStyle="#e98a12";g.fillRect(-12,-44,24,32);g.fillRect(-30,-42,60,7);
+ g.fillStyle="#222";g.fillRect(-10,-12,8,12);g.fillRect(2,-12,8,12);
+ g.fillStyle="#f1c7a0";g.beginPath();g.arc(0,-52,8,0,7);g.fill();g.restore();
+ g.save();g.translate(SP.x-34,SP.y+6);
+ g.fillStyle="#0e5a2b";g.fillRect(-9,-34,18,24);
+ g.fillStyle="#f1c7a0";g.beginPath();g.arc(0,-42,8,0,7);g.fill();
+ g.fillStyle="#fff";g.fillRect(-9,-10,18,9);
+ g.strokeStyle="#f1c7a0";g.lineWidth=6;g.lineCap="round";
+ line(-4,-1,-4,14);line(5,-1,5+leg*22,14-leg*4);g.restore();
+ g.fillStyle="#fff";g.beginPath();g.arc(ball.x,ball.y,9*ball.s,0,7);g.fill();
+ g.fillStyle="#222";g.beginPath();g.arc(ball.x,ball.y,3.5*ball.s,0,7);g.fill();
+ if(res){g.font="800 54px 'Barlow Condensed',Impact,sans-serif";g.textAlign="center";g.lineWidth=6;g.strokeStyle="#000";g.strokeText(res,W/2,H/2+14);g.fillStyle=res==="GOAL!"?"#e98a12":"#fff";g.fillText(res,W/2,H/2+14)}
+}
+function score(){$("gscore").textContent="Goals "+goals+" · Shots "+shots}
+function announce(n){
+ const tpl=(C.game&&C.game.goalText)||"GOAL! A fan just scored on the FLA pitch. Goals this visit: {n}";
+ live.unshift(["⚽ Live from the pitch",tpl.replace("{n}",n)]);if(live.length>5)live.pop();render();
+}
+function shoot(px,py){
+ if(busy)return;busy=true;res="";$("gmsg").textContent="";
+ const tx=Math.max(20,Math.min(340,px)),ty=Math.max(10,Math.min(G.b+8,py));
+ const inside=tx>G.l&&tx<G.r&&ty>G.t&&ty<G.b;
+ const dir=[-1,0,1][Math.random()*3|0],kEnd=180+dir*80;
+ const saved=inside&&Math.abs(tx-kEnd)<42&&ty>G.t+12;
+ const t0=performance.now();kd=dir;
+ (function f(now){
+  const p=Math.min(1,(now-t0)/700),bp=Math.max(0,(p-.12)/.88);
+  leg=Math.sin(Math.min(1,p*3)*Math.PI/2)*(p<.5?1:.2);
+  ball.x=SP.x+(tx-SP.x)*bp;ball.y=SP.y+(ty-SP.y)*bp-Math.sin(bp*Math.PI)*22;ball.s=1-.35*bp;
+  kt=Math.min(1,p*1.6);kx=180+dir*80*kt;
+  draw();
+  if(p<1)return requestAnimationFrame(f);
+  shots++;res=saved?"Saved!":inside?"GOAL!":"Wide!";
+  if(res==="GOAL!"){goals++;announce(goals);$("gmsg").innerHTML='Announcement posted. <a href="#news">See it in News</a>.'}
+  score();draw();
+  setTimeout(()=>{ball={x:SP.x,y:SP.y,s:1};kx=180;kt=0;kd=0;leg=0;res="";busy=false;draw()},1300);
+ })(t0);
+}
+cv.addEventListener("pointerdown",e=>{const r=cv.getBoundingClientRect();shoot((e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height)});
+$("rnd").onclick=()=>shoot(G.l+20+Math.random()*(G.r-G.l-40),G.t+10+Math.random()*(G.b-G.t-20));
+draw();
+})();
+
+// ===== Admin =====
+function shrink(file,max){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const s=Math.min(1,max/Math.max(i.width,i.height)),c=document.createElement("canvas");c.width=i.width*s;c.height=i.height*s;c.getContext("2d").drawImage(i,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.8))};i.src=r.result};r.readAsDataURL(file)})}
+function rows(){
+ $("arows").innerHTML=C.groups[ag].people.map((p,i)=>`<div class="mrow"><div class="av">${p.img?`<img src="${esc(p.img)}" alt="">`:"FLA"}</div><div class="f"><input class="full" data-i="${i}" data-k="n" value="${esc(p.n)}" placeholder="Full name"><input data-i="${i}" data-k="nick" value="${esc(p.nick)}" placeholder="Nickname"><input data-i="${i}" data-k="role" value="${esc(p.role)}" placeholder="Role"><input data-i="${i}" data-k="fac" value="${esc(p.fac)}" placeholder="Faculty"><input type="file" accept="image/*" data-i="${i}" data-ph="1"><button class="btn sm full" data-del="${i}">Remove member</button></div></div>`).join("");
+}
+function admin(){
+ const d=$("adm");
+ if(!unlocked){d.innerHTML=`<h3>Admin</h3><label for="pw">Passcode</label><input id="pw" type="password" autocomplete="off"><div class="bar"><button class="btn sm" id="go">Unlock</button><button class="btn sm" id="x1">Close</button></div><p class="note" id="msg"></p>`;
+  $("go").onclick=()=>{if($("pw").value===C.passcode){unlocked=true;admin()}else $("msg").textContent="Wrong passcode."};$("x1").onclick=()=>$("dlg").close();return}
+ const adv={upcoming:C.upcoming,results:C.results,table:C.table,fame:C.fame,news:C.news,trivia:C.trivia};
+ d.innerHTML=`<h3>Edit website</h3>
+ <label>Breaking news banner</label><input id="a-br" value="${esc(C.breaking)}">
+ <label>Who we are (About)</label><textarea id="a-ab">${esc(C.about)}</textarea>
+ <label>Our mission</label><textarea id="a-mi">${esc(C.mission)}</textarea>
+ <label>Goal announcement from the game (use {n} for the goal count)</label><input id="a-gt" value="${esc((C.game&&C.game.goalText)||"")}">
+ <h3>Constitution</h3><label>Constitution text (optional)</label><textarea id="a-ct">${esc(C.constitution.text)}</textarea>
+ <label>Link to constitution PDF (optional)</label><input id="a-cu" value="${esc(C.constitution.url)}" placeholder="constitution.pdf or a full link">
+ <h3>Members and executives</h3><label>Group</label><select id="ag">${Object.keys(C.groups).map(g=>`<option ${g===ag?"selected":""}>${esc(g)}</option>`).join("")}</select>
+ <div id="arows"></div><div class="bar"><button class="btn sm" id="addm">Add member</button></div>
+ <h3>Gallery</h3><label>Add photos</label><input type="file" id="gup" accept="image/*" multiple><div class="bar"><button class="btn sm" id="gclr">Clear gallery</button></div>
+ <h3>Social links</h3>${["x","youtube","instagram","whatsapp"].map(k=>`<label>${k==="x"?"X":k[0].toUpperCase()+k.slice(1)} link</label><input id="s-${k}" value="${esc(C.social[k])}" placeholder="https://">`).join("")}
+ <h3>Faculties and sponsors</h3><label>Faculties (separate with commas)</label><input id="a-fa" value="${esc(C.faculties.join(", "))}">
+ <label>Sponsors (one per line: Name | logo path, logo optional)</label><textarea id="a-sp">${esc(C.sponsors.map(s=>s.name+(s.img?" | "+s.img:"")).join("\n"))}</textarea>
+ <h3>Advanced</h3><label>Fixtures, results, table, hall of fame, news and trivia (JSON)</label><textarea id="a-adv" style="min-height:160px;font-family:monospace;font-size:13px">${esc(JSON.stringify(adv,null,1))}</textarea>
+ <div class="bar"><button class="btn sm" id="apply">Apply and preview</button><button class="btn sm" id="save">Save on this device</button><button class="btn sm" id="exp">Get content.js</button><button class="btn sm" id="rst">Reset</button><button class="btn sm" id="x2">Close</button></div>
+ <p class="note" id="msg"></p><textarea id="out" hidden readonly style="min-height:140px;font-family:monospace;font-size:12px"></textarea>`;
+ rows();
+ $("ag").onchange=e=>{ag=e.target.value;rows()};
+ $("addm").onclick=()=>{C.groups[ag].people.push({n:"New member",nick:"",role:"",fac:"",img:""});rows()};
+ $("gup").onchange=async e=>{for(const f of e.target.files)C.gallery.push({src:await shrink(f,900),cap:""});render();$("msg").textContent=C.gallery.length+" photos in gallery."};
+ $("gclr").onclick=()=>{C.gallery=[];render();$("msg").textContent="Gallery cleared."};
+ $("apply").onclick=()=>{if(collect())$("msg").textContent="Applied. Scroll the page to preview."};
+ $("save").onclick=()=>{if(!collect())return;try{localStorage.setItem("fla-content",JSON.stringify(C));$("msg").textContent="Saved on this device only. Use Get content.js to publish for everyone."}catch(e){$("msg").textContent="Could not save here. Use Get content.js."}};
+ $("exp").onclick=()=>{if(!collect())return;const code="window.FLA_CONTENT="+JSON.stringify(C,null,1)+";\n";const o=$("out");o.hidden=false;o.value=code;try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([code],{type:"text/javascript"}));a.download="content.js";a.click()}catch(e){}$("msg").textContent="Upload this as content.js to GitHub (replace the old one). You can also copy the text below."};
+ $("rst").onclick=()=>{try{localStorage.removeItem("fla-content")}catch(e){}C=structuredClone(D);ag=tab=Object.keys(C.groups)[0];render();admin()};
+ $("x2").onclick=()=>$("dlg").close();
+}
+function collect(){
+ try{
+  const a=JSON.parse($("a-adv").value);Object.assign(C,a);
+  C.breaking=$("a-br").value;C.game={goalText:$("a-gt").value};C.about=$("a-ab").value;C.mission=$("a-mi").value;
+  C.constitution={text:$("a-ct").value,url:$("a-cu").value.trim()};
+  ["x","youtube","instagram","whatsapp"].forEach(k=>C.social[k]=$("s-"+k).value.trim());
+  C.faculties=$("a-fa").value.split(",").map(s=>s.trim()).filter(Boolean);
+  C.sponsors=$("a-sp").value.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const [n,i]=l.split("|").map(s=>s.trim());return{name:n,img:i||""}});
+  render();return true;
+ }catch(e){$("msg").textContent="The Advanced box has a typing error. Check the commas and quotes.";return false}
+}
+$("dlg").addEventListener("input",async e=>{const t=e.target;if(t.dataset.k){C.groups[ag].people[t.dataset.i][t.dataset.k]=t.value;render()}});
+$("dlg").addEventListener("change",async e=>{const t=e.target;if(t.dataset.ph&&t.files[0]){C.groups[ag].people[t.dataset.i].img=await shrink(t.files[0],400);rows();render()}});
+$("dlg").addEventListener("click",e=>{const b=e.target.closest("[data-del]");if(b){C.groups[ag].people.splice(+b.dataset.del,1);rows();render()}});
+$("adminBtn").onclick=()=>{admin();$("dlg").showModal()};
+</script>
+</body>
+</html>
