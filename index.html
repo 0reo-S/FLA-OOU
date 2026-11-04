@@ -152,7 +152,7 @@ textarea{min-height:90px}
 
 <section id="leadership"><h2>Leadership</h2>
 <p class="lead">The people who run and have run FLA at OOU.</p>
-<div class="tabs" role="tablist" id="tabs"></div><p class="gnote" id="gnote"></p><div class="people" id="people"></div></section>
+<div class="tabs" role="tablist" id="tabs"></div><p class="gnote" id="gnote"></p><div id="people"></div></section>
 
 <section id="faculties"><h2>Participating faculties</h2>
 <p class="lead">Faculties and departments taking part in FLA competitions.</p><div class="chips" id="fac"></div></section>
@@ -204,8 +204,11 @@ import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https:
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const D=window.FLA_CONTENT,cfg=window.FLA_FIREBASE||{};
-let C={...D},FX=[],WIN={mm:[],mw:[],fr:[]},SPOT=[],GAL=[],user=null,db=null,auth=null,tab="",wk="mm",live=[],dt=[];
+let C={...D},FX=[],MEM=[],WIN={mm:[],mw:[],fr:[]},SPOT=[],GAL=[],user=null,db=null,auth=null,tab="ug",wk="mm",mk="ug",live=[],dt=[];
 const day=Math.floor(Date.now()/864e5);
+const GL=[["ug","Undergraduate executives"],["al","Alumni executives"],["past","Past chairmen and patron"]];
+const GR_DEF=JSON.parse(D.groupsJson);
+const noteFor=k=>{const v=C["note_"+k];return v!=null?v:(GR_DEF[GL.find(g=>g[0]===k)[1]].note||"")};
 const empty=t=>`<p class="gnote">${t}</p>`;
 const L=s=>String(s||"").split("\n").map(x=>x.trim()).filter(Boolean).map(x=>x.split("|").map(y=>y.trim()));
 const LN=s=>String(s||"").split("\n").map(x=>x.trim()).filter(Boolean);
@@ -213,7 +216,6 @@ const byT=(a,b)=>(a.t||0)-(b.t||0);
 const hasS=f=>f.ha!==""&&f.ha!=null&&f.aa!==""&&f.aa!=null;
 const fdate=f=>[f.date?new Date(f.date+"T00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short",year:"numeric"}):"",f.info].filter(Boolean).join(" · ");
 const av=(img,n)=>`<div class="av">${img?`<img src="${esc(img)}" alt="${esc(n)}" loading="lazy">`:"FLA"}</div>`;
-const groups=()=>{try{return JSON.parse(C.groupsJson)}catch(e){return JSON.parse(D.groupsJson)}};
 const msg=t=>{const m=$("msg");if(m)m.textContent=t};
 
 /* ===== Firebase ===== */
@@ -223,6 +225,7 @@ if(cfg.apiKey&&!/^PASTE/.test(cfg.apiKey)){
   onSnapshot(doc(db,"site","main"),s=>{C={...D,...(s.exists()?s.data():{})};render()});
   const sub=(name,fn)=>onSnapshot(collection(db,name),s=>{fn(s.docs.map(d=>({id:d.id,...d.data()})));render();if($("dlg").open&&user&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))lists()});
   sub("fixtures",a=>FX=a);
+  sub("members",a=>MEM=a);
   sub("winners",a=>{WIN={mm:[],mw:[],fr:[]};a.forEach(w=>WIN[w.list]&&WIN[w.list].push(w))});
   sub("spotlight",a=>SPOT=a);
   sub("gallery",a=>GAL=a);
@@ -241,10 +244,11 @@ function render(){
  $("hist-t").textContent=C.history||"The story of FLA OOU will be told here soon.";
  const A=L(C.ach);
  $("ach").innerHTML=A.length?A.map(([y,t])=>`<li><b>${esc(y)}</b><br>${esc(t)}</li>`).join(""):`<li>${empty("Achievements will be added soon.")}</li>`;
- const GR=groups();if(!GR[tab])tab=Object.keys(GR)[0];
- $("tabs").innerHTML=Object.keys(GR).map(g=>`<button class="tab" role="tab" data-g="${esc(g)}" aria-selected="${g===tab}">${esc(g)}</button>`).join("");
- const G=GR[tab];$("gnote").textContent=G.note||"";
- $("people").innerHTML=G.people.map(p=>`<div class="person">${av(p.img,p.n)}<b>${esc(p.n)}</b>${p.nick?`<em>“${esc(p.nick)}”</em>`:""}<span>${esc(p.role)}${p.fac?" · "+esc(p.fac):""}</span></div>`).join("");
+ if(!GL.some(g=>g[0]===tab))tab="ug";
+ $("tabs").innerHTML=GL.map(([k,l])=>`<button class="tab" role="tab" data-g="${k}" aria-selected="${k===tab}">${l}</button>`).join("");
+ $("gnote").textContent=noteFor(tab);
+ const ppl=MEM.length?MEM.filter(m=>m.group===tab).sort(byT):GR_DEF[GL.find(g=>g[0]===tab)[1]].people;
+ $("people").innerHTML=ppl.length?`<div class="people">`+ppl.map(p=>`<div class="person">${av(p.img,p.n)}<b>${esc(p.n)}</b>${p.nick?`<em>“${esc(p.nick)}”</em>`:""}<span>${esc(p.role)}${p.fac?" · "+esc(p.fac):""}</span></div>`).join("")+`</div>`:empty("Names will be added soon.");
  $("fac").innerHTML=String(C.faculties||"").split(",").map(s=>s.trim()).filter(Boolean).map(f=>`<span class="chip">${esc(f)}</span>`).join("");
  const up=FX.filter(f=>!hasS(f)&&(f.a||f.b)).sort((a,b)=>(a.date||"9").localeCompare(b.date||"9")||byT(a,b));
  const rs=FX.filter(f=>hasS(f)).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||byT(b,a));
@@ -254,7 +258,7 @@ function render(){
  $("tbl").innerHTML=T.length?T.map((t,i)=>`<tr><td>${i+1}</td><td>${esc(t[0])}</td>${t.slice(1).map(v=>`<td>${esc(v)}</td>`).join("")}</tr>`).join(""):`<tr><td colspan="8" style="text-align:center;font-weight:400;color:var(--mute)">Standings will appear when the season kicks off.</td></tr>`;
  $("w-mm").innerHTML=wins(WIN.mm);$("w-mw").innerHTML=wins(WIN.mw);$("w-fr").innerHTML=wins(WIN.fr);
  $("gal").innerHTML=GAL.length?[...GAL].sort(byT).map(g=>`<div><img src="${esc(g.src)}" alt="FLA photo" loading="lazy"></div>`).join(""):Array.from({length:8},(_,i)=>`<div>Photo ${i+1}</div>`).join("");
- const S=[...SPOT].sort(byT),s=S.length?S[day%S.length]:null;
+ const S=[...SPOT].sort(byT),s=S.find(x=>x.id===C.spotPick)||(S.length?S[day%S.length]:null);
  $("spot").innerHTML=s?`<div class="card spot">${av(s.img,s.n)}<div><h3>${esc(s.n)}</h3><em>${esc(s.year)}</em><p style="margin-top:8px">${esc(s.note)}</p></div></div>`:`<div class="card">${empty("Today's alumni spotlight is coming soon.")}</div>`;
  $("hof").innerHTML=L(C.fame).map(([t,n])=>`<div class="card"><h3>${esc(t)}</h3><small>${esc(n)}</small></div>`).join("");
  $("newsList").innerHTML=[...live,...L(C.news)].map(([t,d],i)=>`<div class="card${i<live.length?" live":""}"><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join("");
@@ -338,17 +342,18 @@ draw();
 /* ===== Admin ===== */
 function shrink(file,max){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const s=Math.min(1,max/Math.max(i.width,i.height)),c=document.createElement("canvas");c.width=i.width*s;c.height=i.height*s;c.getContext("2d").drawImage(i,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.7))};i.src=r.result};r.readAsDataURL(file)})}
 const F_FX=[["a","Team A"],["b","Team B"],["date","Match date","date"],["info","Time · Venue"],["ha","Team A score (blank until played)","number"],["aa","Team B score","number"]];
+const F_M=[["n","Full name","text",1],["nick","Nickname"],["role","Role (e.g. Chairman, Patron)"],["fac","Faculty"]];
 const F_W=[["n","Winner or team name","text",1],["year","Year won"]];
 const F_S=[["n","Alumni name","text",1],["year","Set / years"],["note","Why they are a legend"]];
 const SECTIONS=[
 ["Site text",[["breaking","Breaking news banner","i"],["about","Who we are (About)","t"],["mission","Our mission","t"],["history","History of FLA","t",150],["goalText","Goal announcement from the game ({n} = goal count)","i"]]],
+["Executive group notes",[["note_ug","Note under Undergraduate executives","i"],["note_al","Note under Alumni executives","i"],["note_past","Note under Past chairmen and patron","i"]]],
 ["Achievements, Hall of Fame and News",[["ach","Achievements: one per line as Year | What happened","t",110],["fame","Hall of Fame categories: one per line as Title | Name","t"],["news","News: one per line as Headline | Details","t"]]],
 ["League table",[["table","One team per line as Team | P | W | D | L | GD | Pts","t",110]]],
 ["Daily trivia",[["trivia","One question per line as Question | Option 1 | Option 2 | Option 3 | Number of the right option. Three questions show per day, so keep a big pool.","t",240]]],
 ["Faculties and sponsors",[["faculties","Faculties (separate with commas)","i"],["sponsorPitch","Sponsor pitch","t"],["perks","What sponsors gain (one per line)","t"],["contact","Sponsor contact number","i"],["sponsors","Current sponsors: one per line as Name | logo path (logo optional)","t"]]],
 ["Social links",[["x","X link","i"],["youtube","YouTube link","i"],["instagram","Instagram link","i"],["whatsapp","WhatsApp group 1 link","i"],["whatsapp2","WhatsApp group 2 link","i"]]],
-["Constitution",[["constitutionText","Constitution text (optional)","t"],["constitutionUrl","Link to constitution PDF (optional)","i"]]],
-["Executives (advanced)",[["groupsJson","Executives as JSON. Photos are file paths like images/ug-06.jpg","t",200]]]
+["Constitution",[["constitutionText","Constitution text (optional)","t"],["constitutionUrl","Link to constitution PDF (optional)","i"]]]
 ];
 function erow(col,it,F,ph){
  return `<div class="mrow"${ph?"":' style="grid-template-columns:1fr"'}>${ph?`<div class="av">${it.img?`<img src="${esc(it.img)}" alt="">`:"FLA"}</div>`:""}<div class="f">${F.map(([k,p,ty,fu])=>`<input ${fu?'class="full" ':""}type="${ty||"text"}" data-col="${col}" data-id="${it.id}" data-k="${k}" value="${esc(it[k])}" placeholder="${esc(p)}" aria-label="${esc(p)}">`).join("")}${ph?`<input type="file" accept="image/*" data-col="${col}" data-id="${it.id}" data-photo="1" aria-label="Photo">`:""}<button class="btn sm full" data-rm="${col}" data-id="${it.id}">Remove</button></div></div>`;
@@ -356,8 +361,12 @@ function erow(col,it,F,ph){
 function lists(){
  if(!$("fxrows"))return;
  $("fxrows").innerHTML=[...FX].sort((a,b)=>(a.date||"9").localeCompare(b.date||"9")||byT(a,b)).map(f=>erow("fixtures",f,F_FX)).join("")||empty("No fixtures yet.");
+ $("impwrap").style.display=MEM.length?"none":"";
+ $("mrows").innerHTML=MEM.filter(m=>m.group===mk).sort(byT).map(m=>erow("members",m,F_M,1)).join("")||empty(MEM.length?"No one in this group yet. Tap Add member.":"Tap “Load current executives into the editor” first.");
  $("wrows").innerHTML=[...WIN[wk]].sort(byT).map(w=>erow("winners",w,F_W,1)).join("")||empty("No winners in this list yet.");
  $("srows").innerHTML=[...SPOT].sort(byT).map(s=>erow("spotlight",s,F_S,1)).join("")||empty("No alumni added yet.");
+ $("spick").innerHTML=`<option value="">Rotate daily (automatic)</option>`+[...SPOT].sort(byT).map(s=>`<option value="${s.id}">${esc(s.n||"Unnamed")}</option>`).join("");
+ $("spick").value=C.spotPick||"";
  $("grows").innerHTML=[...GAL].sort(byT).map(g=>`<div class="mrow"><div class="av"><img src="${esc(g.src)}" alt=""></div><div class="f"><button class="btn sm full" data-rm="gallery" data-id="${g.id}">Remove photo</button></div></div>`).join("")||empty("No photos yet.");
 }
 function admin(){
@@ -367,22 +376,30 @@ function admin(){
   d.innerHTML=`<h3>Admin sign in</h3><label for="em">Email</label><input id="em" type="email" autocomplete="username"><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password"><div class="bar"><button class="btn sm" id="go">Sign in</button><button class="btn sm" id="x1">Close</button></div><p class="note" id="msg"></p>`;
   $("go").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("em").value.trim(),$("pw").value)}catch(e){msg("Wrong email or password.")}};
   $("x1").onclick=()=>$("dlg").close();return}
- const fld=([k,l,ty,h])=>`<label for="f-${k}">${l}</label>${ty==="t"?`<textarea id="f-${k}" data-f="${k}" style="min-height:${h||90}px">${esc(C[k])}</textarea>`:`<input id="f-${k}" data-f="${k}" value="${esc(C[k])}">`}`;
- d.innerHTML=`<h3>Edit website</h3><p class="note">Fixtures, winners, spotlight and photos save by themselves as you type. The text sections at the bottom need the Save button.</p>
+ const fld=([k,l,ty,h])=>{const v=C[k]!=null?C[k]:(k.startsWith("note_")?noteFor(k.slice(5)):"");return `<label for="f-${k}">${l}</label>${ty==="t"?`<textarea id="f-${k}" data-f="${k}" style="min-height:${h||90}px">${esc(v)}</textarea>`:`<input id="f-${k}" data-f="${k}" value="${esc(v)}">`}`};
+ d.innerHTML=`<h3>Edit website</h3><p class="note">Fixtures, executives, winners, alumni and photos save by themselves as you type. The text sections at the bottom need the Save button.</p>
  <h3>Match fixtures and results</h3><p class="note">Leave both scores blank for an upcoming match. Fill both once it is played and it moves to Results.</p>
  <div id="fxrows"></div><div class="bar"><button class="btn sm" data-add="fixtures">Add fixture</button></div>
+ <h3>Executives, patron and past chairmen</h3>
+ <div id="impwrap"><p class="note">First time here? Copy the current executives into the editor so you can change them and add photos.</p><div class="bar"><button class="btn sm" id="imp">Load current executives into the editor</button></div></div>
+ <label for="msel">Group</label><select id="msel"><option value="ug">Undergraduate executives</option><option value="al">Alumni executives</option><option value="past">Past chairmen and patron</option></select>
+ <div id="mrows"></div><div class="bar"><button class="btn sm" data-add="members">Add member</button></div>
  <h3>Previous winners</h3><label for="wsel">List</label><select id="wsel"><option value="mm">FLA Main · Men</option><option value="mw">FLA Main · Women</option><option value="fr">FLA Freshers · Men</option></select>
  <div id="wrows"></div><div class="bar"><button class="btn sm" data-add="winners">Add winner</button></div>
- <h3>Alumni spotlight of the day</h3><p class="note">The site shows a different alumnus each day, rotating through this list.</p>
- <div id="srows"></div><div class="bar"><button class="btn sm" data-add="spotlight">Add alumnus</button></div>
+ <h3>Hall of Fame: Alumni of the day</h3><p class="note">Add alumni here. The site rotates through them each day, or you can pick who shows today.</p>
+ <label for="spick">Show on the website</label><select id="spick"></select>
+ <div id="srows"></div><div class="bar"><button class="btn sm" data-add="spotlight">Add alumnus of the day</button></div>
  <h3>Gallery</h3><label for="gup">Add photos</label><input type="file" id="gup" accept="image/*" multiple><div id="grows"></div>
  ${SECTIONS.map(([h,fs])=>`<h3>${h}</h3>${fs.map(fld).join("")}`).join("")}
  <div class="bar"><button class="btn sm" id="savef">Save text sections</button><button class="btn sm" id="out">Sign out</button><button class="btn sm" id="x2">Close</button></div><p class="note" id="msg"></p>`;
- $("wsel").value=wk;lists();
+ $("wsel").value=wk;$("msel").value=mk;lists();
  $("wsel").onchange=e=>{wk=e.target.value;lists()};
+ $("msel").onchange=e=>{mk=e.target.value;lists()};
+ $("spick").onchange=async e=>{try{await setDoc(doc(db,"site","main"),{spotPick:e.target.value},{merge:true});msg("Saved. The website now shows this choice.")}catch(err){msg("Could not save: "+err.message)}};
+ $("imp").onclick=async()=>{if(!confirm("Load the current executives into the editor?"))return;
+  try{let i=0;for(const [k,l] of GL)for(const p of GR_DEF[l].people)await addDoc(collection(db,"members"),{group:k,n:p.n,nick:p.nick||"",role:p.role||"",fac:p.fac||"",img:p.img||"",t:Date.now()+(i++)});msg("Executives loaded. You can now edit them.")}catch(err){msg("Could not save: "+err.message)}};
  $("gup").onchange=async e=>{try{for(const f of e.target.files)await addDoc(collection(db,"gallery"),{src:await shrink(f,900),t:Date.now()});msg("Photos added.");e.target.value=""}catch(err){msg("Could not save: "+err.message)}};
  $("savef").onclick=async()=>{const o={};document.querySelectorAll("#adm [data-f]").forEach(el=>o[el.dataset.f]=el.value);
-  try{JSON.parse(o.groupsJson)}catch(e){return msg("The Executives box has a typing error. Check the commas and quotes.")}
   try{await setDoc(doc(db,"site","main"),o,{merge:true});msg("Saved. The live site is updated.")}catch(err){msg("Could not save: "+err.message)}};
  $("out").onclick=()=>signOut(auth);
  $("x2").onclick=()=>$("dlg").close();
@@ -399,6 +416,7 @@ $("dlg").addEventListener("click",async e=>{
   const ad=e.target.closest("[data-add]");
   if(ad&&db){const c=ad.dataset.add,o={t:Date.now()};
    if(c==="fixtures")Object.assign(o,{a:"",b:"",date:"",info:"",ha:"",aa:""});
+   else if(c==="members")Object.assign(o,{group:mk,n:"",nick:"",role:"",fac:"",img:""});
    else if(c==="winners")Object.assign(o,{list:wk,n:"",year:"",img:""});
    else Object.assign(o,{n:"",year:"",note:"",img:""});
    await addDoc(collection(db,c),o);return}
