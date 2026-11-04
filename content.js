@@ -1,0 +1,51 @@
+window.FLA_CONTENT={
+passcode:"fla2026",
+game:{goalText:"GOAL! A fan just scored on the FLA pitch. Goals this visit: {n}"},
+breaking:"FLA @10 years coming soon",
+about:"The Football Lovers Association, OOU Chapter, brings together students who live and breathe football. We organise competitions, watch parties and events for the whole campus.",
+mission:"To unite OOU students through football, grow talent and fan culture on campus, and run fair, well-organised competitions every year.",
+social:{x:"",youtube:"",instagram:"",whatsapp:""},
+constitution:{text:"",url:""},
+faculties:["FASA","FAMS","CAS","LAW","BMS","CEES","SOSSA","ESAN","NASS"],
+groups:{
+"Undergraduate executives":{note:"2026/2027 session. Oreos-led admin.",people:[
+{n:"Falemu Oreoluwa",nick:"Oreos",role:"Chairman",fac:"BMS",img:"images/ug-06.jpg"},
+{n:"Onanuga Victor",nick:"Nivani",role:"General Secretary",fac:"CEES",img:"images/ug-07.jpg"},
+{n:"Abdulazeez Zainab",nick:"Zanny",role:"Financial Secretary",fac:"FASA",img:"images/ug-01.jpg"},
+{n:"Kareem Awwal",nick:"Kickson",role:"D.O.P.",fac:"FASA",img:"images/ug-05.jpg"},
+{n:"Ayanbadejo Samuel",nick:"Shine",role:"Welfare Director",fac:"ESAN",img:"images/ug-10.jpg"},
+{n:"Kuyoro Testimony",nick:"Blaqlaw",role:"Legal Adviser",fac:"LAW",img:"images/ug-04.jpg"},
+{n:"Babalola Oluwabusayo",nick:"Topboy",role:"SPEDU.",fac:"CAS",img:"images/ug-03.jpg"},
+{n:"Orekoya Sesan",nick:"Chief Eto",role:"Media 1",fac:"FAMS",img:"images/ug-02.jpg"},
+{n:"Oladeinde Mojolaoluwa",nick:"MOJ Sports",role:"Media 2",fac:"SOSSA",img:"images/ug-08.jpg"},
+{n:"Joseph Oluwasayo Daniel",nick:"",role:"Medical 1",fac:"BMS",img:"images/ug-09.jpg"},
+{n:"Oluwaseun Babarafunmi",nick:"Abidemi",role:"Medical 2",fac:"NASS",img:"images/ug-11.jpg"}]},
+"Alumni executives":{note:"Holag-led admin.",people:[
+{n:"Olaitan Owolabi",nick:"Holag",role:"Chairman",fac:"",img:"images/al-06.jpg"},
+{n:"Gbadamosi Yusuf",nick:"Yusluv",role:"General Secretary",fac:"",img:"images/al-07.jpg"},
+{n:"Adeyemi Zainab",nick:"Queen Zee",role:"Assistant General Secretary",fac:"",img:"images/al-03.jpg"},
+{n:"Olayemi Adekoya",nick:"Eri-Ifeoluwa",role:"Financial Secretary",fac:"",img:"images/al-01.jpg"},
+{n:"Adenuga Ayokunle",nick:"Ay Eco",role:"D.O.P.",fac:"",img:"images/al-05.jpg"},
+{n:"Adeleke Taofeek",nick:"Taoibadan",role:"PRO",fac:"",img:"images/al-08.jpg"},
+{n:"Dokeh Rebecca",nick:"Umbreella",role:"Treasurer",fac:"",img:"images/al-09.jpg"},
+{n:"Afeez Ibrahim",nick:"Fizzy",role:"Welfare Director",fac:"",img:"images/al-02.jpg"},
+{n:"Oyesola Oluwarantimi",nick:"Ranti",role:"Assistant Welfare Director",fac:"",img:"images/al-11.jpg"},
+{n:"Ayileka Adesuyi",nick:"Silverboy",role:"Media Director",fac:"",img:"images/al-04.jpg"},
+{n:"Adewumi Azeeb",nick:"Nahbaz",role:"Creative Director",fac:"",img:"images/al-10.jpg"}]},
+"Past chairmen and patron":{note:"",people:[
+{n:"Name to be added",nick:"",role:"Patron",fac:"",img:""},
+{n:"Name to be added",nick:"",role:"Past Chairman",fac:"",img:""},
+{n:"Name to be added",nick:"",role:"Past Chairman",fac:"",img:""}]}
+},
+upcoming:[["Team A","Team B","Date to be set · Venue"],["Team C","Team D","Date to be set · Venue"]],
+results:[["Team A",2,1,"Team C","Final score"],["Team B",0,0,"Team D","Final score"]],
+table:[["Team A",5,4,1,0,9,13],["Team B",5,3,1,1,5,10],["Team C",5,2,1,2,0,7],["Team D",5,0,1,4,-14,1]],
+gallery:[],
+fame:[["Player of the Season","Name to be added"],["Golden Boot","Name to be added"],["Best Team","Name to be added"]],
+news:[["Welcome to the new FLA website","The chapter now has a home online. Check back for fixtures, results and announcements."]],
+trivia:[
+{q:"Which country won the 2022 FIFA World Cup?",o:["Argentina","France","Brazil"],a:0},
+{q:"Which club has won the most Champions League titles?",o:["AC Milan","Real Madrid","Liverpool"],a:1},
+{q:"In which year did Nigeria win its first AFCON?",o:["1980","1994","2013"],a:0}],
+sponsors:[]
+};
