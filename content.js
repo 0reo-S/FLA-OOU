@@ -1,20 +1,15 @@
-window.FLA_CONTENT={
-passcode:"fla2026",
-game:{goalText:"GOAL! A fan just scored on the FLA pitch. Goals this visit: {n}"},
-breaking:"FLA @10 years coming soon",
-about:"The Football Lovers Association, OOU Chapter, brings together students who live and breathe football. We organise competitions, watch parties and events for the whole campus.",
-mission:"To unite OOU students through football, grow talent and fan culture on campus, and run fair, well-organised competitions every year.",
-history:"",
-achievements:[],
-social:{
-x:"https://x.com/ooufla01?s=21",
-youtube:"https://youtube.com/@ooufla?si=IV0kK_SHJT00xwx2",
-instagram:"https://www.instagram.com/oou_fla1?dlrf=NTgwZGZqcjNtNmNw",
-whatsapp:"https://chat.whatsapp.com/HU2HyWIUHDK2gvNTnx36s1?s=cl&p=i&mlu=4&ilr=4&iam=2",
-whatsapp2:"https://chat.whatsapp.com/BseYVp0OdqN5WwZ6TDF91L?s=cl&p=i&mlu=4&ilr=4&iam=2"},
-constitution:{text:"",url:""},
-faculties:["FASA","FAMS","CAS","LAW","BMS","CEES","SOSSA","ESAN","NASS"],
-groups:{
+/* Firebase connection (already filled in for your project) */
+window.FLA_FIREBASE={
+apiKey:"AIzaSyADoUk0ONylhGLfPa5IhfvTPq5qY8vAJLg",
+authDomain:"flaoou-ac560.firebaseapp.com",
+projectId:"flaoou-ac560",
+storageBucket:"flaoou-ac560.firebasestorage.app",
+messagingSenderId:"910418016433",
+appId:"1:910418016433:web:d6679632a0fa47dad38a90"
+};
+
+/* Starting content. Once you save from Admin, the live data in Firebase replaces these. */
+const GROUPS={
 "Undergraduate executives":{note:"2026/2027 session. Oreos-led admin.",people:[
 {n:"Falemu Oreoluwa",nick:"Oreos",role:"Chairman",fac:"BMS",img:"images/ug-06.jpg"},
 {n:"Onanuga Victor",nick:"Nivani",role:"General Secretary",fac:"CEES",img:"images/ug-07.jpg"},
@@ -43,38 +38,50 @@ groups:{
 {n:"Name to be added",nick:"",role:"Patron",fac:"",img:""},
 {n:"Name to be added",nick:"",role:"Past Chairman",fac:"",img:""},
 {n:"Name to be added",nick:"",role:"Past Chairman",fac:"",img:""}]}
-},
-upcoming:[],
-results:[],
-table:[],
-winners:{mm:[],mw:[],fr:[]},
-spotlight:[],
-gallery:[],
-fame:[["Player of the Season","Name to be added"],["Golden Boot","Name to be added"],["Best Team","Name to be added"]],
-news:[["Welcome to the new FLA website","The chapter now has a home online. Check back for fixtures, results and announcements."]],
-trivia:[
-{q:"Which country won the 2022 FIFA World Cup?",o:["Argentina","France","Brazil"],a:0},
-{q:"Which club has won the most Champions League titles?",o:["AC Milan","Real Madrid","Liverpool"],a:1},
-{q:"In which year did Nigeria win its first AFCON?",o:["1980","1994","2013"],a:0},
-{q:"Who has won the most Ballon d'Or awards?",o:["Cristiano Ronaldo","Lionel Messi","Michel Platini"],a:1},
-{q:"Which country hosted the 2010 World Cup?",o:["Brazil","Germany","South Africa"],a:2},
-{q:"Who won the first World Cup in 1930?",o:["Uruguay","Argentina","Italy"],a:0},
-{q:"Which country has won the most World Cups?",o:["Germany","Brazil","Italy"],a:1},
-{q:"Nigeria won Olympic football gold in 1996 in which city?",o:["Atlanta","Sydney","Barcelona"],a:0},
-{q:"Who is the World Cup's all-time top scorer?",o:["Pele","Ronaldo Nazario","Miroslav Klose"],a:2},
-{q:"Which club is nicknamed the Gunners?",o:["Arsenal","Chelsea","Tottenham"],a:0},
-{q:"Which country won Euro 2024?",o:["England","Spain","France"],a:1},
-{q:"Which country hosted the 2022 World Cup?",o:["Qatar","Russia","Japan"],a:0},
-{q:"Who scored the 'Hand of God' goal?",o:["Pele","Zidane","Maradona"],a:2},
-{q:"Who is the Premier League's all-time top scorer?",o:["Wayne Rooney","Alan Shearer","Harry Kane"],a:1},
-{q:"Which country won AFCON 2023, played in early 2024?",o:["Nigeria","Ivory Coast","Senegal"],a:1}],
+};
+
+window.FLA_CONTENT={
+breaking:"FLA @10 years coming soon",
+about:"The Football Lovers Association, OOU Chapter, brings together students who live and breathe football. We organise competitions, watch parties and events for the whole campus.",
+mission:"To unite OOU students through football, grow talent and fan culture on campus, and run fair, well-organised competitions every year.",
+history:"",
+ach:"",
+goalText:"GOAL! A fan just scored on the FLA pitch. Goals this visit: {n}",
+faculties:"FASA, FAMS, CAS, LAW, BMS, CEES, SOSSA, ESAN, NASS",
+table:"",
+fame:`Player of the Season | Name to be added
+Golden Boot | Name to be added
+Best Team | Name to be added`,
+news:"Welcome to the new FLA website | The chapter now has a home online. Check back for fixtures, results and announcements.",
+trivia:`Which country won the 2022 FIFA World Cup? | Argentina | France | Brazil | 1
+Which club has won the most Champions League titles? | AC Milan | Real Madrid | Liverpool | 2
+In which year did Nigeria win its first AFCON? | 1980 | 1994 | 2013 | 1
+Who has won the most Ballon d'Or awards? | Cristiano Ronaldo | Lionel Messi | Michel Platini | 2
+Which country hosted the 2010 World Cup? | Brazil | Germany | South Africa | 3
+Who won the first World Cup in 1930? | Uruguay | Argentina | Italy | 1
+Which country has won the most World Cups? | Germany | Brazil | Italy | 2
+Nigeria won Olympic football gold in 1996 in which city? | Atlanta | Sydney | Barcelona | 1
+Who is the World Cup's all-time top scorer? | Pele | Ronaldo Nazario | Miroslav Klose | 3
+Which club is nicknamed the Gunners? | Arsenal | Chelsea | Tottenham | 1
+Which country won Euro 2024? | England | Spain | France | 2
+Which country hosted the 2022 World Cup? | Qatar | Russia | Japan | 1
+Who scored the 'Hand of God' goal? | Pele | Zidane | Maradona | 3
+Who is the Premier League's all-time top scorer? | Wayne Rooney | Alan Shearer | Harry Kane | 2
+Which country won AFCON 2023, played in early 2024? | Nigeria | Ivory Coast | Senegal | 2`,
 contact:"07062213814",
 sponsorPitch:"Put your brand in front of the biggest football crowd on campus. FLA match days bring fans, faculties and satellite campuses together in one place.",
-sponsorPerks:[
-"1,000+ fans in attendance on every match day",
-"Participation from different faculties and our satellite campuses",
-"Brand visibility at matches, on this website and across our social pages",
-"Direct access to an energetic student audience",
-"Brands from every campus are welcome, no one is left out"],
-sponsors:[]
+perks:`1,000+ fans in attendance on every match day
+Participation from different faculties and our satellite campuses
+Brand visibility at matches, on this website and across our social pages
+Direct access to an energetic student audience
+Brands from every campus are welcome, no one is left out`,
+sponsors:"",
+constitutionText:"",
+constitutionUrl:"",
+x:"https://x.com/ooufla01?s=21",
+youtube:"https://youtube.com/@ooufla?si=IV0kK_SHJT00xwx2",
+instagram:"https://www.instagram.com/oou_fla1?dlrf=NTgwZGZqcjNtNmNw",
+whatsapp:"https://chat.whatsapp.com/HU2HyWIUHDK2gvNTnx36s1?s=cl&p=i&mlu=4&ilr=4&iam=2",
+whatsapp2:"https://chat.whatsapp.com/BseYVp0OdqN5WwZ6TDF91L?s=cl&p=i&mlu=4&ilr=4&iam=2",
+groupsJson:JSON.stringify(GROUPS,null,1)
 };
